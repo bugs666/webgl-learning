@@ -1,15 +1,18 @@
 /**
- * 用鼠标控制webgl点位(位置，大小)
+ * 用鼠标控制webgl点位(位置，大小，颜色)
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, getWebGlPositionByMousePosition, renderPoints} from "../utils";
+import {initShaders, getWebGlPositionByMousePosition} from "../utils";
 
 function MyCanvas() {
     let ref = useRef();
     const webGlRef = useRef();
     const positionRef = useRef();
     const pointSizeRef = useRef();
-    const [pointPositions, setPointPositions] = useState([[0, 0, 40]]);
+    const colorRef = useRef();
+    const [pointConf, setPointConf] = useState([{
+        x: 0, y: 0, size: 40, color: [0, 1.0, 1.0, 0]
+    }]);
 
     const rgba = (red, green, blue, alpha = 1) => {
         return {
@@ -42,20 +45,23 @@ function MyCanvas() {
         const gl = webGlRef.current;
         const glPosition = positionRef.current;
         const pointSize = pointSizeRef.current;
+        const pointColor = colorRef.current;
         if (gl) {
             // 指定将要用来清理绘图区的颜色
             gl.clearColor(0., 0.0, 0.0, 1.0);
             // // 清理绘图区
             gl.clear(gl.COLOR_BUFFER_BIT);
-            pointPositions.forEach(([x, y, size]) => {
+            pointConf.forEach(({x, y, size, color}) => {
+                const [r, g, b, a] = color;
                 //js控制点位尺寸
                 gl.vertexAttrib1f(pointSize, size);
                 gl.vertexAttrib2f(glPosition, x, y);
+                gl.uniform4f(pointColor, r, g, b, a);
                 // 绘制顶点
                 gl.drawArrays(gl.POINTS, 0, 1);
             })
         }
-    }, [pointPositions]);
+    }, [pointConf]);
 
     useEffect(() => {
         let gl = extracted();
@@ -69,21 +75,34 @@ function MyCanvas() {
             gl_PointSize = a_PointSize;
         }`;
         //片元着色器
-        let fragmentShader = `void main() {
-            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+        let fragmentShader = `
+        //初始化片元颜色变量
+        precision mediump float;
+        uniform vec4 a_FragColor;
+        void main() {
+            gl_FragColor = a_FragColor;
         }`;
         gl = initShaders(gl, vertexShader, fragmentShader);
         webGlRef.current = gl;
         // 通过js获取点坐标
         let a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+        // 通过js获取获取点尺寸
         let a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+        // 通过js获取片元色值
+        const a_FragColor = gl.getUniformLocation(gl.program, 'a_FragColor');
         positionRef.current = a_Position;
         pointSizeRef.current = a_PointSize;
+        colorRef.current = a_FragColor;
     }, []);
 
     const changePositions = position => {
-        const size = Math.random() * 100 + 40;
-        setPointPositions([...pointPositions, [...position, size]]);
+        setPointConf([...pointConf, {
+            ...position,
+            //随机生成点位的尺寸值
+            size: Math.random() * 100 + 40,
+            //随机生成rgba色值
+            color: [Math.random(), Math.random(), Math.random(), 1.0]
+        }]);
     }
 
     return <canvas ref={ref} onClick={e => getWebGlPositionByMousePosition(e, changePositions)}/>;

@@ -37,6 +37,9 @@ export function getWebGlPositionByMousePosition(event, callback) {
     //canvas坐标系中Y轴方向和webgl坐标系方向相反，所以需要将y坐标取反
     //webgl坐标系的单位长度是canvas画布的一半长宽，所以需要除以一半长宽进行坐标变换
     if (!!callback) {
-        callback([baseCenterX / canvasOriginX, -baseCenterY / canvasOriginY]);
+        callback({
+            x: baseCenterX / canvasOriginX,
+            y: -baseCenterY / canvasOriginY
+        });
     }
 }
