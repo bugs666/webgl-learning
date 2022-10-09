@@ -1,14 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import MyCanvas from "./comps/MyCanvas";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-      </header>
-    </div>
-  );
+
+    return <MyCanvas/>;
 }
 
 export default App;
