@@ -3,6 +3,9 @@
  */
 import {useEffect, useRef, useState} from "react";
 import {initShaders, getWebGlPositionByMousePosition} from "../utils";
+import COMMON_VERTEX_SHADER from "../shaders/CommonVertex.glsl";
+import COMMON_FRAGMENT_SHADER from '../shaders/CommonFragment.glsl';
+import CIRCLE_FRAGMENT_SHADER from '../shaders/CircleFragment.glsl';
 
 function MyCanvas() {
     let ref = useRef();
@@ -13,15 +16,6 @@ function MyCanvas() {
     const [pointConf, setPointConf] = useState([{
         x: 0, y: 0, size: 40, color: [0, 1.0, 1.0, 0]
     }]);
-
-    const rgba = (red, green, blue, alpha = 1) => {
-        return {
-            red: red / 255,
-            green: green / 255,
-            blue: blue / 255,
-            alpha
-        };
-    }
 
     useEffect(() => {
         window.onresize = extracted;
@@ -56,7 +50,8 @@ function MyCanvas() {
                 //js控制点位尺寸
                 gl.vertexAttrib1f(pointSize, size);
                 gl.vertexAttrib2f(glPosition, x, y);
-                gl.uniform4f(pointColor, r, g, b, a);
+                // gl.uniform4f(pointColor, r, g, b, a);
+                gl.uniform4fv(pointColor, color);
                 // 绘制顶点
                 gl.drawArrays(gl.POINTS, 0, 1);
             })
@@ -65,24 +60,7 @@ function MyCanvas() {
 
     useEffect(() => {
         let gl = extracted();
-        //顶点着色器
-        let vertexShader = `
-        //初始化顶点位置
-        attribute vec4 a_Position;
-        attribute float a_PointSize;
-        void main() {
-            gl_Position = a_Position;
-            gl_PointSize = a_PointSize;
-        }`;
-        //片元着色器
-        let fragmentShader = `
-        //初始化片元颜色变量
-        precision mediump float;
-        uniform vec4 a_FragColor;
-        void main() {
-            gl_FragColor = a_FragColor;
-        }`;
-        gl = initShaders(gl, vertexShader, fragmentShader);
+        gl = initShaders(gl, COMMON_VERTEX_SHADER, CIRCLE_FRAGMENT_SHADER);
         webGlRef.current = gl;
         // 通过js获取点坐标
         let a_Position = gl.getAttribLocation(gl.program, 'a_Position');
