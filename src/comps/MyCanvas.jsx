@@ -1,5 +1,6 @@
 /**
  * 用鼠标控制webgl点位(位置，大小，颜色)
+ * 绘制圆形顶点
  */
 import {useEffect, useRef, useState} from "react";
 import {initShaders, getWebGlPositionByMousePosition} from "../utils";
@@ -42,7 +43,7 @@ function MyCanvas() {
         const pointColor = colorRef.current;
         if (gl) {
             // 指定将要用来清理绘图区的颜色
-            gl.clearColor(0., 0.0, 0.0, 1.0);
+            gl.clearColor(0., 0.0, 0.0, 0);
             // // 清理绘图区
             gl.clear(gl.COLOR_BUFFER_BIT);
             pointConf.forEach(({x, y, size, color}) => {
