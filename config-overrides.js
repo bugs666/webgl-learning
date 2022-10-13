@@ -1,5 +1,9 @@
+let path = require('path');
+
+const baseUrl = path.resolve(__dirname, 'src');
+
 module.exports = function override(config, env) {
-    const {module:{rules:rules}} = config;
+    const {module: {rules: rules}, resolve, resolve: {alias}} = config;
     const overrideConf = {
         ...config,
         module: {
@@ -11,8 +15,14 @@ module.exports = function override(config, env) {
                     type: 'javascript/auto'
                 }
             ]
+        },
+        resolve: {
+            ...resolve,
+            alias: {
+                ...alias,
+                '@': baseUrl
+            }
         }
     }
-    console.log('重构~', overrideConf);
     return overrideConf;
 }

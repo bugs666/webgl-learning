@@ -1,0 +1,1 @@
+export const STAR_BASE_COLOR = [0.87, 0.91, 1];

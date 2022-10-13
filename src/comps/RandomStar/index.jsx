@@ -2,10 +2,14 @@
  * 用鼠标控制webgl点位(位置，大小，颜色)
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, getWebGlPositionByMousePosition} from "../../utils";
-import COMMON_VERTEX_SHADER from "../../shaders/CommonVertex.glsl";
-import COMMON_FRAGMENT_SHADER from '../../shaders/CommonFragment.glsl';
-import CIRCLE_FRAGMENT_SHADER from '../../shaders/CircleFragment.glsl';
+import {initShaders, getWebGlPositionByMousePosition} from "@/utils";
+import COMMON_VERTEX_SHADER from "@/shaders/CommonVertex.glsl";
+import CIRCLE_FRAGMENT_SHADER from '@/shaders/CircleFragment.glsl';
+import {STAR_BASE_COLOR} from "@/constant";
+import Compose from "./Compose";
+import Track from "./Track";
+
+let compose = new Compose();
 
 function RandomStar() {
     let ref = useRef();
@@ -15,10 +19,35 @@ function RandomStar() {
     const colorRef = useRef();
     const [pointConf, setPointConf] = useState([]);
 
+    const render = () => {
+        // console.log('@@@@@',pointConf);
+        const gl = webGlRef.current;
+        const glPosition = positionRef.current;
+        const pointSize = pointSizeRef.current;
+        const pointColor = colorRef.current;
+        if (!gl) return;
+        // 指定将要用来清理绘图区的颜色
+        gl.clearColor(0., 0.0, 0.0, 0);
+        // // 清理绘图区
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        pointConf.forEach(({x, y, size, a}) => {
+            //js控制点位尺寸
+            gl.vertexAttrib1f(pointSize, size);
+            gl.vertexAttrib2f(glPosition, x, y);
+            gl.uniform4fv(pointColor, [...STAR_BASE_COLOR, a]);
+            // 绘制顶点
+            gl.drawArrays(gl.POINTS, 0, 1);
+        })
+    }
+
     useEffect(() => {
-        window.onresize = extracted;
-        return () => window.onresize = null;
-    }, []);
+        if (!pointConf.length) return;
+        !(function ani() {
+            compose.update(new Date())
+            render()
+            requestAnimationFrame(ani)
+        })()
+    }, [pointConf]);
 
     function extracted() {
         if (!ref.current) {
@@ -32,29 +61,6 @@ function RandomStar() {
         //获取webgl画笔
         return canvasNode.getContext('webgl');
     }
-
-    useEffect(() => {
-        const gl = webGlRef.current;
-        const glPosition = positionRef.current;
-        const pointSize = pointSizeRef.current;
-        const pointColor = colorRef.current;
-        if (gl) {
-            // 指定将要用来清理绘图区的颜色
-            gl.clearColor(0., 0.0, 0.0, 0);
-            // // 清理绘图区
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            pointConf.forEach(({x, y, size, color}) => {
-                const [r, g, b, a] = color;
-                //js控制点位尺寸
-                gl.vertexAttrib1f(pointSize, size);
-                gl.vertexAttrib2f(glPosition, x, y);
-                // gl.uniform4f(pointColor, r, g, b, a);
-                gl.uniform4fv(pointColor, color);
-                // 绘制顶点
-                gl.drawArrays(gl.POINTS, 0, 1);
-            })
-        }
-    }, [pointConf]);
 
     useEffect(() => {
         let gl = extracted();
@@ -74,13 +80,29 @@ function RandomStar() {
     }, []);
 
     const changePositions = position => {
-        setPointConf([...pointConf, {
+        const conf = {
+            //坐标
             ...position,
-            //随机生成点位的尺寸值
+            //尺寸
             size: Math.random() * 5 + 2,
-            //随机生成rgba色值
-            color: [0.87, 0.91, 1, Math.random()]
-        }]);
+            //初始透明度
+            a: 1
+        };
+        let track = new Track(conf);
+        track.start = new Date();
+        track.keyMap = new Map([
+            ['a', [
+                [500, 1],
+                [1000, 0],
+                [1500, 1],
+            ]]
+        ])
+        track.timeLen = 2000;
+        track.loop = true;
+        compose.add(track);
+        setPointConf([
+            ...pointConf, conf
+        ]);
     }
 
     return <canvas ref={ref} onClick={e => getWebGlPositionByMousePosition(e, changePositions)}/>;
