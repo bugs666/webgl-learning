@@ -2,7 +2,7 @@ let path = require('path');
 
 const baseUrl = path.resolve(__dirname, 'src');
 
-module.exports = function override(config, env) {
+module.exports = function override(config) {
     const {module: {rules: rules}, resolve, resolve: {alias}} = config;
     const overrideConf = {
         ...config,

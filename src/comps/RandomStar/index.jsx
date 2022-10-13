@@ -3,8 +3,8 @@
  */
 import {useEffect, useRef, useState} from "react";
 import {initShaders, getWebGlPositionByMousePosition} from "@/utils";
-import COMMON_VERTEX_SHADER from "@/shaders/CommonVertex.glsl";
-import CIRCLE_FRAGMENT_SHADER from '@/shaders/CircleFragment.glsl';
+import COMMON_VERTEX_SHADER from "@/shaders/CommonShaders/CommonVertex.glsl";
+import CIRCLE_FRAGMENT_SHADER from '@/shaders/CircleShader/CircleFragment.glsl';
 import {STAR_BASE_COLOR} from "@/constant";
 import Compose from "./Compose";
 import Track from "./Track";
