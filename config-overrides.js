@@ -1,6 +1,6 @@
 let path = require('path');
 
-const baseUrl = path.resolve(__dirname, 'src');
+const baseUrl = path.resolve(__dirname, 'src/pages');
 
 module.exports = function override(config) {
     const {module: {rules: rules}, resolve, resolve: {alias}} = config;
@@ -20,7 +20,7 @@ module.exports = function override(config) {
             ...resolve,
             alias: {
                 ...alias,
-                '@': baseUrl
+                'page': baseUrl
             }
         }
     }

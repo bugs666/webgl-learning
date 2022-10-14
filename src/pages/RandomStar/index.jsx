@@ -2,10 +2,10 @@
  * 用鼠标控制webgl点位(位置，大小，颜色)
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, getWebGlPositionByMousePosition} from "@/utils";
-import COMMON_VERTEX_SHADER from "@/shaders/CommonShaders/CommonVertex.glsl";
-import CIRCLE_FRAGMENT_SHADER from '@/shaders/CircleShader/CircleFragment.glsl';
-import {STAR_BASE_COLOR} from "@/constant";
+import {initShaders, getWebGlPositionByMousePosition} from "../../utils";
+import COMMON_VERTEX_SHADER from "../../shaders/CommonShaders/CommonVertex.glsl";
+import CIRCLE_FRAGMENT_SHADER from '../../shaders/CircleShader/CircleFragment.glsl';
+import {STAR_BASE_COLOR} from "../../constant";
 import Compose from "./Compose";
 import Track from "./Track";
 
@@ -20,7 +20,6 @@ function RandomStar() {
     const [pointConf, setPointConf] = useState([]);
 
     const render = () => {
-        // console.log('@@@@@',pointConf);
         const gl = webGlRef.current;
         const glPosition = positionRef.current;
         const pointSize = pointSizeRef.current;

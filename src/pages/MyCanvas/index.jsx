@@ -3,9 +3,9 @@
  * 绘制圆形顶点
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, getWebGlPositionByMousePosition} from "../utils";
-import COMMON_VERTEX_SHADER from "@/shaders/CommonShaders/CommonVertex.glsl";
-import CIRCLE_FRAGMENT_SHADER from '@/shaders/CircleShader/CircleFragment.glsl';
+import {initShaders, getWebGlPositionByMousePosition} from "../../utils";
+import COMMON_VERTEX_SHADER from "../../shaders/CommonShaders/CommonVertex.glsl";
+import CIRCLE_FRAGMENT_SHADER from '../../shaders/CircleShader/CircleFragment.glsl';
 
 function MyCanvas() {
     let ref = useRef();
