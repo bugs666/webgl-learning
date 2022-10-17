@@ -20,7 +20,7 @@ module.exports = function override(config) {
             ...resolve,
             alias: {
                 ...alias,
-                'page': baseUrl
+                '@page': baseUrl
             }
         }
     }
