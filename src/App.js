@@ -9,8 +9,6 @@ import IMenu from "./layouts/IMenu";
 
 const App = props => {
 
-    console.log(props);
-
     return <Layout>
         <Header
             style={{

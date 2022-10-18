@@ -7,17 +7,27 @@ const lazyLoad = (module) => {
 
 const routes = [
     {
-        name: '普通绘图',
+        name: '基础绘图',
         children: [
             {
                 name: '绘制单个点',
                 path: 'common/singlePoint',
-                element: lazyLoad('MyCanvas')
+                element: lazyLoad('SinglePoint')
             },
             {
                 name: '绘制星空',
                 path: 'common/renderStar',
                 element: lazyLoad('RandomStar')
+            },
+            {
+                name: '绘制多点',
+                path: 'common/multiPoint',
+                element: lazyLoad('MultiPoint')
+            },
+            {
+                name: '绘制矩形面',
+                path: 'common/rectangularFace',
+                element: lazyLoad('RectangularFace')
             }
         ]
     }

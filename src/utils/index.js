@@ -21,6 +21,13 @@ export function initShaders(gl, vsSource, fsSource) {
     gl.attachShader(program, fragmentShader);
     //连接webgl上下文对象和程序对象
     gl.linkProgram(program);
+
+    //debugger程序，查看更多的报错信息
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        let info = gl.getProgramInfoLog(program);
+        throw new Error('Could not compile WebGL program. \n\n' + info);
+    }
+
     //启动程序对象
     gl.useProgram(program);
     //将程序对象挂到上下文对象上
@@ -28,6 +35,7 @@ export function initShaders(gl, vsSource, fsSource) {
     return gl;
 }
 
+//鼠标坐标位置转化为webgl坐标系坐标
 export function getWebGlPositionByMousePosition(event, callback) {
     const {clientX, clientY} = event;
     const {top, left, width, height} = event.target.getBoundingClientRect();
@@ -42,4 +50,11 @@ export function getWebGlPositionByMousePosition(event, callback) {
             y: -baseCenterY / canvasOriginY
         });
     }
+}
+
+export function initCanvas(canvasNode) {
+    let {width, height} = document.getElementsByClassName('site-layout-background')?.[0]?.getBoundingClientRect();
+    canvasNode.width = width;
+    canvasNode.height = height;
+    return canvasNode;
 }

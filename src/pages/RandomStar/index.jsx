@@ -1,8 +1,8 @@
 /**
- * 用鼠标控制webgl点位(位置，大小，颜色)
+ * 补间动画，改变顶点的透明度（星星眨眼）
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, getWebGlPositionByMousePosition} from "../../utils";
+import {initShaders, getWebGlPositionByMousePosition, initCanvas} from "../../utils";
 import COMMON_VERTEX_SHADER from "../../shaders/CommonShaders/CommonVertex.glsl";
 import CIRCLE_FRAGMENT_SHADER from '../../shaders/CircleShader/CircleFragment.glsl';
 import {STAR_BASE_COLOR} from "../../constant";
@@ -54,11 +54,10 @@ function RandomStar() {
         }
         //获取canvas元素并设置宽高
         const canvasNode = ref.current;
-        canvasNode.height = window.innerHeight;
-        canvasNode.width = window.innerWidth;
+        let canvas = initCanvas(canvasNode);
 
         //获取webgl画笔
-        return canvasNode.getContext('webgl');
+        return canvas.getContext('webgl');
     }
 
     useEffect(() => {

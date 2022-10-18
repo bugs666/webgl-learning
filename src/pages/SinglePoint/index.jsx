@@ -3,13 +3,12 @@
  * 绘制圆形顶点
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, getWebGlPositionByMousePosition} from "../../utils";
+import {initShaders, getWebGlPositionByMousePosition, initCanvas} from "../../utils";
 import COMMON_VERTEX_SHADER from "../../shaders/CommonShaders/CommonVertex.glsl";
 import CIRCLE_FRAGMENT_SHADER from '../../shaders/CircleShader/CircleFragment.glsl';
 
-function MyCanvas() {
+function SinglePoint() {
     let canvasRef = useRef();
-    let containerRef = useRef();
     const webGlRef = useRef();
     const positionRef = useRef();
     const pointSizeRef = useRef();
@@ -26,12 +25,10 @@ function MyCanvas() {
     function extracted() {
         //获取canvas元素并设置宽高
         const canvasNode = canvasRef.current;
-        let {width, height} = containerRef.current.getBoundingClientRect();
-        canvasNode.height = height;
-        canvasNode.width = width;
+        let canvas = initCanvas(canvasNode);
 
         //获取webgl画笔
-        return canvasNode.getContext('webgl');
+        return canvas.getContext('webgl');
     }
 
     useEffect(() => {
@@ -82,9 +79,7 @@ function MyCanvas() {
         }]);
     }
 
-    return <div ref={containerRef} style={{height: '100%'}}>
-        <canvas ref={canvasRef} onClick={e => getWebGlPositionByMousePosition(e, changePositions)}/>
-    </div>;
+    return <canvas ref={canvasRef} onClick={e => getWebGlPositionByMousePosition(e, changePositions)}/>
 }
 
-export default MyCanvas;
+export default SinglePoint;
