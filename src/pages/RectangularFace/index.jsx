@@ -1,18 +1,19 @@
 /**
- * 绘制多点，（三角形,线段，闭合单线图形）
+ * 绘制简单几何面，（绘制多个三角面进行拼接）
  */
 import {useEffect, useRef, useState} from "react";
 import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../utils";
 import VERTEX_SHADER from "../../shaders/MultipleShaders/Vertex.glsl";
 import FRAGMENT_SHADER from '../../shaders/MultipleShaders/Fragment.glsl';
 
-function MultiPoint() {
+function RectangularFace() {
     let canvasRef = useRef();
     const [pointConf, setPointConf] = useState(new Float32Array([
         //三个顶点位置（x，y）
-        0, 0.2,
-        -0.1, -0.1,
-        0.1, -0.1
+        -0.2, 0.2,
+        0.2, 0.2,
+        -0.2, -0.2,
+        0.2, -0.2
     ]));
 
     useEffect(() => {
@@ -53,19 +54,10 @@ function MultiPoint() {
         gl.clearColor(0., 0.0, 0.0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         //绘图，绘制模式，从哪里开始，绘制数量
-        // gl.drawArrays(gl.POINTS, 0, 3);
-        // gl.drawArrays(gl.TRIANGLES, 0, 3);
-        gl.drawArrays(gl.LINE_LOOP, 0, 3);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }, [pointConf]);
 
-    const addPoint = position => {
-        let {x, y} = position;
-        x = Number(x).toFixed(3) * 1;
-        y = Number(y).toFixed(3) * 1;
-        setPointConf([...pointConf, x, y]);
-    }
-
-    return <canvas ref={canvasRef} /*onClick={e => getWebGlPositionByMousePosition(e, addPoint)}*//>
+    return <canvas ref={canvasRef}/>
 }
 
-export default MultiPoint;
+export default RectangularFace;
