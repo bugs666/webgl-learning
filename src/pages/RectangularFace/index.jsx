@@ -11,9 +11,12 @@ function RectangularFace() {
     const [pointConf, setPointConf] = useState(new Float32Array([
         //三个顶点位置（x，y）
         -0.2, 0.2,
-        0.2, 0.2,
         -0.2, -0.2,
-        0.2, -0.2
+        0.2, 0.2,
+
+        -0.2, -0.2,
+        0.2, -0.2,
+        0.2, 0.2
     ]));
 
     useEffect(() => {
@@ -54,7 +57,7 @@ function RectangularFace() {
         gl.clearColor(0., 0.0, 0.0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         //绘图，绘制模式，从哪里开始，绘制数量
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 6);
     }, [pointConf]);
 
     return <canvas ref={canvasRef}/>
