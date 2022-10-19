@@ -1,20 +1,20 @@
 /**
  * 绘制多点，（三角形,线段，闭合单线图形）
  */
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../utils";
 import VERTEX_SHADER from "../../shaders/MultipleShaders/Vertex.glsl";
 import FRAGMENT_SHADER from '../../shaders/MultipleShaders/Fragment.glsl';
+import {useInitWebGlContext} from "../../hooks";
 
 function MultiPoint() {
     let canvasRef = useRef();
-    let webglRef = useRef();
-    const [pointConf, setPointConf] = useState(new Float32Array([
+    let [addVertex, setWebGl, draw] = useInitWebGlContext([
         //三个顶点位置（x，y）
         0, 0.2,
         -0.1, -0.1,
         0.1, -0.1
-    ]));
+    ], 'a_Position');
 
     useEffect(() => {
         window.onresize = extracted;
@@ -31,47 +31,23 @@ function MultiPoint() {
         return canvas.getContext('webgl');
     }
 
-    function renderPoints(webglContext) {
-        const gl = webglContext ?? webglRef.current;
-        //将数据写入缓冲区中
-        gl.bufferData(gl.ARRAY_BUFFER, pointConf, gl.STATIC_DRAW);
-        // 通过js获取点坐标
-        let a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-        /**
-         * 从指定的缓冲区中读取数据，
-         * 用法：https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
-         */
-        gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
-        //开启顶点数据的批处理，着色器默认只会一个一个接收顶点数据，逐个绘制
-        gl.enableVertexAttribArray(a_Position);
-        // 指定将要用来清理绘图区的颜色
-        gl.clearColor(0., 0.0, 0.0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        //绘图，绘制模式，从哪里开始，绘制数量
-        // gl.drawArrays(gl.POINTS, 0, 3);
-        // gl.drawArrays(gl.TRIANGLES, 0, 3);
-        gl.drawArrays(gl.POINTS, 0, pointConf.length / 2);
-        gl.drawArrays(gl.LINE_LOOP, 0, pointConf.length / 2);
-    }
-
     useEffect(() => {
         let gl = extracted();
         gl = initShaders(gl, VERTEX_SHADER, FRAGMENT_SHADER);
-        //创建缓冲对象，用于存储顶点数据
-        let vertexBuffer = gl.createBuffer();
-        //将缓冲对象和 缓冲区进行绑定
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-        renderPoints(gl);
-        webglRef.current = gl;
+        // 指定将要用来清理绘图区的颜色
+        gl.clearColor(0., 0.0, 0.0, 1);
+        setWebGl(gl);
     }, []);
 
-    useEffect(renderPoints, [pointConf])
+    useEffect(() => {
+        draw(['POINTS', 'LINE_LOOP']);
+    });
 
     const addPoint = position => {
         let {x, y} = position;
         x = Number(x).toFixed(3) * 1;
         y = Number(y).toFixed(3) * 1;
-        setPointConf(new Float32Array([...pointConf, x, y]));
+        addVertex([x, y]);
     }
 
     return <canvas ref={canvasRef} onClick={e => getWebGlPositionByMousePosition(e, addPoint)}/>

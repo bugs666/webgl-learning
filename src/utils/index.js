@@ -9,7 +9,7 @@ function loadShader(gl, type, source) {
     return shader;
 }
 
-export function initShaders(gl, vsSource, fsSource) {
+function initShaders(gl, vsSource, fsSource) {
     //创建程序对象
     const program = gl.createProgram();
     //建立着色对象
@@ -36,7 +36,7 @@ export function initShaders(gl, vsSource, fsSource) {
 }
 
 //鼠标坐标位置转化为webgl坐标系坐标
-export function getWebGlPositionByMousePosition(event, callback) {
+function getWebGlPositionByMousePosition(event, callback) {
     const {clientX, clientY} = event;
     const {top, left, width, height} = event.target.getBoundingClientRect();
     const [canvasX, canvasY] = [clientX - left, clientY - top];
@@ -52,9 +52,15 @@ export function getWebGlPositionByMousePosition(event, callback) {
     }
 }
 
-export function initCanvas(canvasNode) {
+function initCanvas(canvasNode) {
     let {width, height} = document.getElementsByClassName('site-layout-background')?.[0]?.getBoundingClientRect();
     canvasNode.width = width;
     canvasNode.height = height;
     return canvasNode;
 }
+
+export {
+    initCanvas,
+    initShaders,
+    getWebGlPositionByMousePosition
+};
