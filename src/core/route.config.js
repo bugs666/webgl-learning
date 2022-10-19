@@ -30,6 +30,16 @@ const routes = [
                 element: lazyLoad('RectangularFace')
             }
         ]
+    },
+    {
+        name: '复杂绘图',
+        children: [
+            {
+                name: '绘制多条线',
+                path: 'common/multipleLine',
+                element: lazyLoad('MultipleLine')
+            }
+        ]
     }
 ]
 

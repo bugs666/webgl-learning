@@ -8,6 +8,7 @@ import FRAGMENT_SHADER from '../../shaders/MultipleShaders/Fragment.glsl';
 
 function MultiPoint() {
     let canvasRef = useRef();
+    let webglRef = useRef();
     const [pointConf, setPointConf] = useState(new Float32Array([
         //三个顶点位置（x，y）
         0, 0.2,
@@ -30,14 +31,8 @@ function MultiPoint() {
         return canvas.getContext('webgl');
     }
 
-    useEffect(() => {
-        if (!pointConf) return;
-        let gl = extracted();
-        gl = initShaders(gl, VERTEX_SHADER, FRAGMENT_SHADER);
-        //创建缓冲对象，用于存储顶点数据
-        let vertexBuffer = gl.createBuffer();
-        //将缓冲对象和 缓冲区进行绑定
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    function renderPoints(webglContext) {
+        const gl = webglContext ?? webglRef.current;
         //将数据写入缓冲区中
         gl.bufferData(gl.ARRAY_BUFFER, pointConf, gl.STATIC_DRAW);
         // 通过js获取点坐标
@@ -55,17 +50,31 @@ function MultiPoint() {
         //绘图，绘制模式，从哪里开始，绘制数量
         // gl.drawArrays(gl.POINTS, 0, 3);
         // gl.drawArrays(gl.TRIANGLES, 0, 3);
-        gl.drawArrays(gl.LINE_LOOP, 0, 3);
-    }, [pointConf]);
+        gl.drawArrays(gl.POINTS, 0, pointConf.length / 2);
+        gl.drawArrays(gl.LINE_LOOP, 0, pointConf.length / 2);
+    }
+
+    useEffect(() => {
+        let gl = extracted();
+        gl = initShaders(gl, VERTEX_SHADER, FRAGMENT_SHADER);
+        //创建缓冲对象，用于存储顶点数据
+        let vertexBuffer = gl.createBuffer();
+        //将缓冲对象和 缓冲区进行绑定
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        renderPoints(gl);
+        webglRef.current = gl;
+    }, []);
+
+    useEffect(renderPoints, [pointConf])
 
     const addPoint = position => {
         let {x, y} = position;
         x = Number(x).toFixed(3) * 1;
         y = Number(y).toFixed(3) * 1;
-        setPointConf([...pointConf, x, y]);
+        setPointConf(new Float32Array([...pointConf, x, y]));
     }
 
-    return <canvas ref={canvasRef} /*onClick={e => getWebGlPositionByMousePosition(e, addPoint)}*//>
+    return <canvas ref={canvasRef} onClick={e => getWebGlPositionByMousePosition(e, addPoint)}/>
 }
 
 export default MultiPoint;
