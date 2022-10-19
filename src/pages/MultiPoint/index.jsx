@@ -4,7 +4,7 @@
 import {useEffect, useRef} from "react";
 import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../utils";
 import VERTEX_SHADER from "../../shaders/MultipleShaders/Vertex.glsl";
-import FRAGMENT_SHADER from '../../shaders/MultipleShaders/Fragment.glsl';
+import FRAGMENT_SHADER from '../../shaders/MultipleShaders/CircleFragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
 
 function MultiPoint() {

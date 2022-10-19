@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-export function useInitWebGlContext(data, position) {
+export function useInitWebGlContext(data, position, flag = 'isPoints') {
     let [originalVertexData, setOriginalVertexData] = useState(data);
     let [webgl, setWebGl] = useState(null);
     let vertexData = useMemo(() => {
@@ -27,7 +27,12 @@ export function useInitWebGlContext(data, position) {
         webgl.clear(webgl.COLOR_BUFFER_BIT);
         const count = vertexData.length / 2;
         types.forEach(type => {
-            webgl.drawArrays(webgl[type], 0, count);
+            try {
+                let isPoint = webgl.getUniformLocation(webgl.program, flag);
+                webgl.uniform1f(isPoint, type === 'POINTS');
+            } finally {
+                webgl.drawArrays(webgl[type], 0, count);
+            }
         });
     }, [webgl, vertexData]);
 
