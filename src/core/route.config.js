@@ -35,7 +35,7 @@ const routes = [
         name: '复杂绘图',
         children: [
             {
-                name: '绘制多条线',
+                name: '图形转面',
                 path: 'common/multipleLine',
                 element: lazyLoad('MultipleLine')
             }

@@ -11,11 +11,6 @@ function MultiPoint() {
     let canvasRef = useRef();
     let [addVertex, setWebGl, draw] = useInitWebGlContext([], 'a_Position');
 
-    useEffect(() => {
-        window.onresize = extracted;
-        return () => window.onresize = null;
-    }, []);
-
     function extracted() {
 
         //获取canvas元素并设置宽高
@@ -25,6 +20,11 @@ function MultiPoint() {
         //获取webgl画笔
         return canvas.getContext('webgl');
     }
+
+    useEffect(() => {
+        window.onresize = extracted;
+        return () => window.onresize = null;
+    }, []);
 
     useEffect(() => {
         let gl = extracted();
@@ -38,17 +38,8 @@ function MultiPoint() {
         draw(['POINTS', 'LINE_STRIP']);
     });
 
-    const addPoint = position => {
-        let {x, y} = position;
-        x = Number(x).toFixed(3) * 1;
-        y = Number(y).toFixed(3) * 1;
-        addVertex([x, y]);
-    }
-
     return <canvas
         ref={canvasRef}
-        onClick={e => getWebGlPositionByMousePosition(e, addPoint)}
-        // onMouseMove={e => getWebGlPositionByMousePosition(e, addPoint)}
     />
 }
 
