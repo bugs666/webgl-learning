@@ -2,21 +2,38 @@
  * 绘制多点，（三角形,线段，闭合单线图形）
  */
 import {useEffect, useRef} from "react";
-import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../utils";
+import {initShaders, initCanvas, cssPosition2WebGl} from "../../utils";
 import VERTEX_SHADER from "../../shaders/MultipleShaders/Vertex.glsl";
 import FRAGMENT_SHADER from '../../shaders/MultipleShaders/Fragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
+import {SQUARE_PATH_DATA} from "../../constant";
 
 function MultiPoint() {
     let canvasRef = useRef();
-    let [addVertex, setWebGl, draw] = useInitWebGlContext([], 'a_Position');
+    let {addVertex, setWebGl, draw} = useInitWebGlContext([], 'a_Position');
+
+    function initSquareData(canvas) {
+        const {width, height} = canvas;
+        const widthHeightRatio = width / height;
+        const squH = 1.0;
+        const squW = squH / widthHeightRatio;
+        const [maxSquX, maxSquY] = [squW / 2, squH / 2];
+        let getWebGlPositionX = cssPosition2WebGl(0, -maxSquX, 600, maxSquX);
+        let getWebGlPositionY = cssPosition2WebGl(0, -maxSquY, 600, maxSquY);
+        let data = SQUARE_PATH_DATA.map((position, i) => {
+            const flag = i % 2 === 0
+            if (flag) return getWebGlPositionX(position)
+            return getWebGlPositionY(position);
+        });
+        return data;
+    }
 
     function extracted() {
 
         //获取canvas元素并设置宽高
         const canvasNode = canvasRef.current;
         let canvas = initCanvas(canvasNode);
-
+        addVertex(initSquareData(canvas));
         //获取webgl画笔
         return canvas.getContext('webgl');
     }
@@ -35,7 +52,7 @@ function MultiPoint() {
     }, []);
 
     useEffect(() => {
-        draw(['POINTS', 'LINE_STRIP']);
+        draw(['POINTS', 'LINE_LOOP']);
     });
 
     return <canvas

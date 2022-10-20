@@ -49,5 +49,7 @@ export function useInitWebGlContext(data, position, flag = 'isPoints') {
     //     setOriginalVertexData(currentData);
     // }, [originalVertexData]);
 
-    return [addVertex, /*updateVertex*/ setWebGl, draw];
+    return {
+        addVertex, /*updateVertex*/ setWebGl, draw
+    };
 }

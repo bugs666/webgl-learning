@@ -52,6 +52,26 @@ function getWebGlPositionByMousePosition(event, callback) {
     }
 }
 
+/**
+ * 构建css与webgl单位长度的比例尺，y=kx+b,点斜式求关系
+ * @param minCss css坐标最小值
+ * @param minWg  webgl坐标最小值
+ * @param maxCss css坐标最大值
+ * @param maxWg  webgl坐标最大值
+ */
+function cssPosition2WebGl(minCss, minWg, maxCss, maxWg) {
+    // k = (y1-y1) / (x2-x1);
+    const delta = {
+        x: maxCss - minCss,
+        y: maxWg - minWg,
+    }
+    const k = delta.y / delta.x;
+    const b = (minWg - k * minCss);
+    return x => {
+        return k * x + b;
+    }
+}
+
 function initCanvas(canvasNode) {
     let {width, height} = document.getElementsByClassName('site-layout-background')?.[0]?.getBoundingClientRect();
     canvasNode.width = width;
@@ -62,5 +82,6 @@ function initCanvas(canvasNode) {
 export {
     initCanvas,
     initShaders,
+    cssPosition2WebGl,
     getWebGlPositionByMousePosition
 };
