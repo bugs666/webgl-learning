@@ -1,5 +1,5 @@
 /**
- * 绘制多点，（三角形,线段，闭合单线图形）
+ * 图形转面，图形网格化
  */
 import {useEffect, useRef} from "react";
 import {initShaders, initCanvas, cssPosition2WebGl} from "../../utils";
@@ -20,12 +20,11 @@ function MultiPoint() {
         const [maxSquX, maxSquY] = [squW / 2, squH / 2];
         let getWebGlPositionX = cssPosition2WebGl(0, -maxSquX, 600, maxSquX);
         let getWebGlPositionY = cssPosition2WebGl(0, -maxSquY, 600, maxSquY);
-        let data = SQUARE_PATH_DATA.map((position, i) => {
+        return SQUARE_PATH_DATA.map((position, i) => {
             const flag = i % 2 === 0
             if (flag) return getWebGlPositionX(position)
             return getWebGlPositionY(position);
         });
-        return data;
     }
 
     function extracted() {

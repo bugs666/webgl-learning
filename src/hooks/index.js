@@ -40,16 +40,11 @@ export function useInitWebGlContext(data, position, flag = 'isPoints') {
         setOriginalVertexData([...originalVertexData, ...data]);
     }, [originalVertexData]);
 
-    // let updateVertex = useCallback(data => {
-    //     let currentData = originalVertexData;
-    //     const size = currentData.length;
-    //     const [x, y] = data;
-    //     currentData[size - 1] = y;
-    //     currentData[size - 2] = x;
-    //     setOriginalVertexData(currentData);
-    // }, [originalVertexData]);
-
     return {
-        addVertex, /*updateVertex*/ setWebGl, draw
+        webgl,
+        addVertex,
+        setWebGl,
+        draw,
+        setData: setOriginalVertexData
     };
 }

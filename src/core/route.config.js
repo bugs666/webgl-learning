@@ -40,6 +40,16 @@ const routes = [
                 element: lazyLoad('MultipleLine')
             }
         ]
+    },
+    {
+        name: '简单效果',
+        children: [
+            {
+                name: '平移',
+                path: 'common/translation',
+                element: lazyLoad('Translation')
+            }
+        ]
     }
 ]
 
