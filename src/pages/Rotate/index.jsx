@@ -1,22 +1,30 @@
 /**
- * 平移变换
+ * 图形旋转
  */
 import {useEffect, useRef} from "react";
 import {initShaders, initCanvas} from "../../utils";
-import VERTEX_SHADER from "../../shaders/TranslationShaders/Vertex.glsl";
+import VERTEX_SHADER from "../../shaders/Rotate/Vertex.glsl";
 import FRAGMENT_SHADER from '../../shaders/MultipleShaders/CircleFragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
 
 function MultiPoint() {
     let canvasRef = useRef();
-    let flagRef = useRef(false);
-    let yRef = useRef(0);
-    let {addVertex, setWebGl, draw, webgl} = useInitWebGlContext([
-        //三个顶点位置（x，y）
-        0, 0.2,
-        -0.1, -0.1,
-        0.1, -0.1
-    ], 'a_Position');
+    let zRef = useRef(0);
+    let {addVertex, setWebGl, draw, webgl} = useInitWebGlContext([], 'a_Position');
+
+    function initSquareData(canvas) {
+        const {width, height} = canvas;
+        const widthHeightRatio = width / height;
+        const squH = 1.0;
+        const squW = squH / widthHeightRatio;
+        const [maxSquX, maxSquY] = [squW / 2, squH / 2];
+        return [
+            -maxSquX, maxSquY,
+            maxSquX, maxSquY,
+            maxSquX, -maxSquY,
+            -maxSquX, -maxSquY
+        ]
+    }
 
     useEffect(() => {
         window.onresize = extracted;
@@ -28,7 +36,7 @@ function MultiPoint() {
         //获取canvas元素并设置宽高
         const canvasNode = canvasRef.current;
         let canvas = initCanvas(canvasNode);
-
+        addVertex(initSquareData(canvas));
         //获取webgl画笔
         return canvas.getContext('webgl');
     }
@@ -45,14 +53,10 @@ function MultiPoint() {
     useEffect(() => {
         (function ani() {
             if (!webgl) return;
-            if (yRef.current > 1) {
-                yRef.current = -1;
-            } else {
-                yRef.current += 0.02;
-            }
-            let transition = webgl.getUniformLocation(webgl.program, 'transition');
-            webgl.uniform4fv(transition, [0, yRef.current, 0, 0,]);
-            draw(['TRIANGLES']);
+            zRef.current += 0.02;
+            let angle = webgl.getUniformLocation(webgl.program, 'angle');
+            webgl.uniform1f(angle, zRef.current);
+            draw(['LINE_LOOP']);
             requestAnimationFrame(ani);
         })();
     });

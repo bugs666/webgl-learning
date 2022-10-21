@@ -48,6 +48,11 @@ const routes = [
                 name: '平移',
                 path: 'common/translation',
                 element: lazyLoad('Translation')
+            },
+            {
+                name: '旋转',
+                path: 'common/rotate',
+                element: lazyLoad('Rotate')
             }
         ]
     }
