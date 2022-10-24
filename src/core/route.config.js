@@ -53,6 +53,11 @@ const routes = [
                 name: '旋转',
                 path: 'common/rotate',
                 element: lazyLoad('Rotate')
+            },
+            {
+                name: '矩阵旋转',
+                path: 'common/matrixRotation',
+                element: lazyLoad('MatrixRotation')
             }
         ]
     }
