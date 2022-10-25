@@ -73,7 +73,14 @@ const routes = [
     },
     {
         name: '复合变换',
-        children: []
+        // Compound transformation
+        children: [
+            {
+                name: '综合变换',
+                path: 'common/compoundTransformation',
+                element: lazyLoad('CompoundTransformation')
+            }
+        ]
     }
 ]
 
