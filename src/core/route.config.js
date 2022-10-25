@@ -57,9 +57,23 @@ const routes = [
             {
                 name: '矩阵旋转',
                 path: 'common/matrixRotation',
-                element: lazyLoad('MatrixRotation')
+                element: lazyLoad('MatrixShaders')
+            },
+            {
+                name: '矩阵平移',
+                path: 'common/matrixTranslation',
+                element: lazyLoad('MatrixTranslation')
+            },
+            {
+                name: '矩阵缩放',
+                path: 'common/matrixScale',
+                element: lazyLoad('MatrixScale')
             }
         ]
+    },
+    {
+        name: '复合变换',
+        children: []
     }
 ]
 

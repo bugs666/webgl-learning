@@ -53,14 +53,17 @@ function MultiPoint() {
     useEffect(() => {
         (function ani() {
             if (!webgl) return;
-            zRef.current -= 0.02;
-            const [sinB, cosB] = [Math.sin(zRef.current), Math.cos(zRef.current)];
+            if (zRef.current > 1) {
+                zRef.current = -1;
+            } else {
+                zRef.current += 0.01;
+            }
             //四维矩阵，列主序（一列是一个坐标想，x,y,z,w）
             let matrix = [
-                cosB, sinB, 0, 0,
-                -sinB, cosB, 0, 0,
+                1, 0, 0, 0,
+                -0, 1, 0, 0,
                 0, 0, 1, 0,
-                0, 0, 0, 1
+                zRef.current, zRef.current, 0, 1
             ];
             let mat = webgl.getUniformLocation(webgl.program, 'u_mat');
             webgl.uniformMatrix4fv(mat, false, matrix);
