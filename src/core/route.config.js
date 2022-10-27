@@ -55,6 +55,11 @@ const routes = [
                 element: lazyLoad('Rotate')
             },
             {
+                name: '缩放',
+                path: 'common/zoom',
+                element: lazyLoad('Zoom')
+            },
+            {
                 name: '矩阵旋转',
                 path: 'common/matrixRotation',
                 element: lazyLoad('MatrixShaders')
