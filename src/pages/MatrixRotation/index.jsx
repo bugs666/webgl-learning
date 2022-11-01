@@ -10,7 +10,7 @@ import {useInitWebGlContext} from "../../hooks";
 function MultiPoint() {
     let canvasRef = useRef();
     let zRef = useRef(0);
-    let {addVertex, setWebGl, draw, webgl} = useInitWebGlContext([], 'a_Position');
+    let {addVertex, setWebGl, draw, webgl} = useInitWebGlContext({data: [], position: 'a_Position'});
 
     function initSquareData(canvas) {
         const {width, height} = canvas;

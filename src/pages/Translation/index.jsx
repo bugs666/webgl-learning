@@ -11,12 +11,14 @@ function MultiPoint() {
     let canvasRef = useRef();
     let flagRef = useRef(false);
     let yRef = useRef(0);
-    let {addVertex, setWebGl, draw, webgl} = useInitWebGlContext([
-        //三个顶点位置（x，y）
-        0, 0.2,
-        -0.1, -0.1,
-        0.1, -0.1
-    ], 'a_Position');
+    let {addVertex, setWebGl, draw, webgl} = useInitWebGlContext({
+        data: [
+            //三个顶点位置（x，y）
+            0, 0.2,
+            -0.1, -0.1,
+            0.1, -0.1
+        ], position: 'a_Position'
+    });
 
     useEffect(() => {
         window.onresize = extracted;

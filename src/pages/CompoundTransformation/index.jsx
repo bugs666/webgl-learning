@@ -10,15 +10,35 @@ import {Matrix4, Vector3} from 'three';
 
 function MultiPoint() {
     let canvasRef = useRef();
-    let transitionRef = useRef(0);
-    let rotateRef = useRef(0);
-    let scaleRef = useRef(0);
-    let {addVertex, setWebGl, draw, webgl} = useInitWebGlContext([
-        //三个顶点位置（x，y）
-        0, 0.2,
-        -0.1, -0.1,
-        0.1, -0.1
-    ], 'a_Position');
+    let {setWebGl, draw, webgl} = useInitWebGlContext({
+        data: [
+            0.2, 0.2, 0.2,
+            -0.2, 0.2, 0.2,
+            -0.2, -0.2, 0.2,
+            0.2, -0.2, 0.2,
+            0.2, -0.2, -0.2,
+            0.2, 0.2, -0.2,
+            -0.2, 0.2, -0.2,
+            -0.2, -0.2, -0.2,
+        ], position: 'a_Position',
+        size: 3,
+        pointIndex: new Uint8Array([
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0,
+
+            0, 5,
+            1, 6,
+            2, 7,
+            3, 4,
+
+            4, 5,
+            5, 6,
+            6, 7,
+            7, 4
+        ])
+    });
 
     useEffect(() => {
         window.onresize = extracted;
@@ -44,26 +64,16 @@ function MultiPoint() {
     }, []);
 
     useEffect(() => {
-        (function ani() {
-            if (!webgl) return;
-            rotateRef.current += 0.01;
-            if (transitionRef.current > 1) {
-                transitionRef.current = -1;
-            } else {
-                transitionRef.current += 0.02;
-            }
-            scaleRef.current += 0.01;
-            let angle = Math.sin(scaleRef.current) + 1;
-            const rotationM = new Matrix4().makeRotationZ(rotateRef.current);
-            const translationM = new Matrix4().makeTranslation(transitionRef.current, transitionRef.current, 0);
-            const scaleM = new Matrix4().makeScale(angle, angle, angle);
-            const matrix = rotationM.multiply(scaleM).multiply(translationM);
-            let matVal = webgl.getUniformLocation(webgl.program, 'u_mat');
-            webgl.uniformMatrix4fv(matVal, false, matrix.elements);
-            draw(['TRIANGLES']);
-            requestAnimationFrame(ani);
-        })();
-    });
+        if (!webgl) return;
+        const viewMatrix = getViewMatrix(
+            new Vector3(0.6, 0.2, 0.5),
+            new Vector3(0.0, 0.1, 0),
+            new Vector3(0, 1, 0)
+        )
+        let matVal = webgl.getUniformLocation(webgl.program, 'u_mat');
+        webgl.uniformMatrix4fv(matVal, false, viewMatrix);
+        draw(['LINES']);
+    }, [webgl]);
 
     /**
      * 根据视点坐标，目标点坐标，上方向 构建视图矩阵
@@ -79,7 +89,24 @@ function MultiPoint() {
         //根据上面求出的两个值计算垂直的上方向
         let newUpDirection = new Vector3().crossVectors(sight, normalVector).normalize();
 
-        new Matrix4().set()
+        const {x: sx, y: sy, z: sz} = sight;
+        // 旋转矩阵
+        const rotation = new Matrix4().set(
+            ...normalVector, 0,
+            ...newUpDirection, 0,
+            -sx, -sy, -sz, 0,
+            0, 0, 0, 1);
+
+        const {x: vx, y: vy, z: vz} = viewPoint;
+        // 位移矩阵
+        const transition = new Matrix4().set(
+            1, 0, 0, -vx,
+            0, 1, 0, -vy,
+            0, 0, 1, -vz,
+            0, 0, 0, 1
+        );
+
+        return rotation.multiply(transition).elements;
     }
 
     return <canvas ref={canvasRef}/>

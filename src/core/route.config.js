@@ -15,11 +15,6 @@ const routes = [
                 element: lazyLoad('SinglePoint')
             },
             {
-                name: '绘制星空',
-                path: 'common/renderStar',
-                element: lazyLoad('RandomStar')
-            },
-            {
                 name: '绘制多点',
                 path: 'common/multiPoint',
                 element: lazyLoad('MultiPoint')
@@ -62,7 +57,7 @@ const routes = [
             {
                 name: '矩阵旋转',
                 path: 'common/matrixRotation',
-                element: lazyLoad('MatrixShaders')
+                element: lazyLoad('MatrixRotation')
             },
             {
                 name: '矩阵平移',
@@ -80,11 +75,22 @@ const routes = [
         name: '复合变换',
         children: [
             {
-                name: '综合变换',
+                name: '视图矩阵',
                 path: 'common/compoundTransformation',
                 element: lazyLoad('CompoundTransformation')
             }
         ]
+    },
+    {
+        name: 'demo',
+        children: [
+            {
+                name: '绘制星空',
+                path: 'common/renderStar',
+                element: lazyLoad('RandomStar')
+            }
+        ]
+
     }
 ]
 
