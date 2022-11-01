@@ -78,7 +78,6 @@ const routes = [
     },
     {
         name: '复合变换',
-        // Compound transformation
         children: [
             {
                 name: '综合变换',

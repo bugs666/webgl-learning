@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 
-export function useInitWebGlContext(data, position, flag = 'isPoints') {
+export function useInitWebGlContext(data, position, size = 2, flag = 'isPoints') {
     let [originalVertexData, setOriginalVertexData] = useState(data);
     let [webgl, setWebGl] = useState(null);
     let vertexData = useMemo(() => {
@@ -17,7 +17,7 @@ export function useInitWebGlContext(data, position, flag = 'isPoints') {
          * 从指定的缓冲区中读取数据，
          * 用法：https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
          */
-        webgl.vertexAttribPointer(a_Position, 2, webgl.FLOAT, false, 0, 0);
+        webgl.vertexAttribPointer(a_Position, size, webgl.FLOAT, false, 0, 0);
         //开启顶点数据的批处理，着色器默认只会一个一个接收顶点数据，逐个绘制
         webgl.enableVertexAttribArray(a_Position);
     }, [webgl, vertexData]);
@@ -25,7 +25,7 @@ export function useInitWebGlContext(data, position, flag = 'isPoints') {
     let draw = useCallback((types) => {
         if (!webgl) return;
         webgl.clear(webgl.COLOR_BUFFER_BIT);
-        const count = vertexData.length / 2;
+        const count = vertexData.length / size;
         types.forEach(type => {
             try {
                 let isPoint = webgl.getUniformLocation(webgl.program, flag);

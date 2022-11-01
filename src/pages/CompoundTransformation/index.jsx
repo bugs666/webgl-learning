@@ -65,14 +65,24 @@ function MultiPoint() {
         })();
     });
 
-    const addPoint = position => {
-        let {x, y} = position;
-        x = Number(x).toFixed(3) * 1;
-        y = Number(y).toFixed(3) * 1;
-        addVertex([x, y]);
+    /**
+     * 根据视点坐标，目标点坐标，上方向 构建视图矩阵
+     * @param viewPoint   视点坐标
+     * @param targetPoint 目标点坐标
+     * @param upDirection 上方向
+     */
+    const getViewMatrix = (viewPoint, targetPoint, upDirection) => {
+        //视线方向单位向量
+        let sight = new Vector3().subVectors(viewPoint, targetPoint).normalize();
+        //根据上方向和视线方向计算视线和上方向平面的法向量
+        let normalVector = new Vector3().crossVectors(upDirection, sight).normalize();
+        //根据上面求出的两个值计算垂直的上方向
+        let newUpDirection = new Vector3().crossVectors(sight, normalVector).normalize();
+
+        new Matrix4().set()
     }
 
-    return <canvas ref={canvasRef} /*onClick={() => flagRef.current = !flagRef.current}*//>
+    return <canvas ref={canvasRef}/>
 }
 
 export default MultiPoint;
