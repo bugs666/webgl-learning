@@ -2,7 +2,7 @@
  * 图形转面，图形网格化
  */
 import {useEffect, useRef} from "react";
-import {initShaders, initCanvas, cssPosition2WebGl} from "../../utils";
+import {initShaders, initCanvas, buildLinearScale} from "../../utils";
 import VERTEX_SHADER from "../../shaders/MultipleShaders/Vertex.glsl";
 import FRAGMENT_SHADER from '../../shaders/MultipleShaders/Fragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
@@ -18,8 +18,8 @@ function MultiPoint() {
         const squH = 1.0;
         const squW = squH / widthHeightRatio;
         const [maxSquX, maxSquY] = [squW / 2, squH / 2];
-        let getWebGlPositionX = cssPosition2WebGl(0, -maxSquX, 600, maxSquX);
-        let getWebGlPositionY = cssPosition2WebGl(0, -maxSquY, 600, maxSquY);
+        let getWebGlPositionX = buildLinearScale(0, -maxSquX, 600, maxSquX);
+        let getWebGlPositionY = buildLinearScale(0, -maxSquY, 600, maxSquY);
         return SQUARE_PATH_DATA.map((position, i) => {
             const flag = i % 2 === 0
             if (flag) return getWebGlPositionX(position)

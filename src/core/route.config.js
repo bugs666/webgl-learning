@@ -93,6 +93,11 @@ const routes = [
                 name: '绘制星空',
                 path: 'common/renderStar',
                 element: lazyLoad('RandomStar')
+            },
+            {
+                name: '波浪',
+                path: 'common/wave',
+                element: lazyLoad('SinWave')
             }
         ]
 

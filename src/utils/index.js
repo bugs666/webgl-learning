@@ -55,20 +55,20 @@ function getWebGlPositionByMousePosition(event, callback) {
 }
 
 /**
- * 构建css与webgl单位长度的比例尺，y=kx+b,点斜式求关系
- * @param minCss css坐标最小值
- * @param minWg  webgl坐标最小值
- * @param maxCss css坐标最大值
- * @param maxWg  webgl坐标最大值
+ * 构建线性比例尺，y=kx+b,点斜式求关系
+ * k = (y1-y1) / (x2-x1);
+ * @param x1 见名知意
+ * @param x2 见名知意
+ * @param y1 见名知意
+ * @param y2 见名知意
  */
-function cssPosition2WebGl(minCss, minWg, maxCss, maxWg) {
-    // k = (y1-y1) / (x2-x1);
+function buildLinearScale(x1, x2, y1, y2) {
     const delta = {
-        x: maxCss - minCss,
-        y: maxWg - minWg,
+        x: y1 - x1,
+        y: y2 - x2,
     }
     const k = delta.y / delta.x;
-    const b = (minWg - k * minCss);
+    const b = (x2 - k * x1);
     return x => {
         return k * x + b;
     }
@@ -128,7 +128,7 @@ export {
     initCanvas,
     initShaders,
     getViewMatrix,
-    cssPosition2WebGl,
+    buildLinearScale,
     buildLengthWidthEqualScale,
     getWebGlPositionByMousePosition
 };
