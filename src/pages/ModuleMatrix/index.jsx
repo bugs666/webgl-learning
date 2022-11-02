@@ -11,7 +11,12 @@ import {Matrix4, Vector3} from 'three';
 
 function MultiPoint() {
     let canvasRef = useRef();
+    //旋转角度
     let rotateRef = useRef(0);
+    //位移高度
+    let yRef = useRef(0.7);
+    //运动速度
+    let vyRef = useRef(0);
     let {setWebGl, draw, webgl, setData} = useInitWebGlContext({
         data: [],
         position: 'a_Position',
@@ -87,8 +92,18 @@ function MultiPoint() {
         let moduleMatrix = new Matrix4();
         (function ani() {
             rotateRef.current += 0.01;
+            //运动加速度为-0.001，下落速度逐渐加快 v= V0+at;
+            vyRef.current -= 0.001;
+            //从初始高度开始下落 （此处并不遵循物理的位移公式，只是为了高度加快递减）
+            yRef.current += vyRef.current;
             moduleMatrix.makeRotationY(rotateRef.current);
+            moduleMatrix.setPosition(0, yRef.current, 0);
+            let element_13 = moduleMatrix.elements[13];
             webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.elements);
+            if (element_13 <= -0.6) {
+                yRef.current = -0.6;
+                vyRef.current *= -1;
+            }
             draw(['LINES']);
             requestAnimationFrame(ani);
         })();
