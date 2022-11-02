@@ -3,7 +3,7 @@
  * 从哪个点观察目标
  */
 import {useEffect, useRef} from "react";
-import {initShaders, initCanvas, buildLengthWidthEqualScale} from "../../utils";
+import {initShaders, initCanvas, buildLengthWidthEqualScale, getViewMatrix} from "../../utils";
 import VERTEX_SHADER from "../../shaders/MatrixShaders/Vertex.glsl";
 import FRAGMENT_SHADER from '../../shaders/MultipleShaders/CircleFragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
@@ -84,40 +84,6 @@ function MultiPoint() {
         webgl.uniformMatrix4fv(matVal, false, viewMatrix);
         draw(['LINES']);
     }, [webgl]);
-
-    /**
-     * 根据视点坐标，目标点坐标，上方向 构建视图矩阵
-     * @param viewPoint   视点坐标
-     * @param targetPoint 目标点坐标
-     * @param upDirection 上方向
-     */
-    const getViewMatrix = (viewPoint, targetPoint, upDirection) => {
-        //视线方向单位向量
-        let sight = new Vector3().subVectors(viewPoint, targetPoint).normalize();
-        //根据上方向和视线方向计算视线和上方向平面的法向量
-        let normalVector = new Vector3().crossVectors(upDirection, sight).normalize();
-        //根据上面求出的两个值计算垂直的上方向
-        let newUpDirection = new Vector3().crossVectors(sight, normalVector).normalize();
-
-        const {x: sx, y: sy, z: sz} = sight;
-        // 旋转矩阵
-        const rotation = new Matrix4().set(
-            ...normalVector, 0,
-            ...newUpDirection, 0,
-            -sx, -sy, -sz, 0,
-            0, 0, 0, 1);
-
-        const {x: vx, y: vy, z: vz} = viewPoint;
-        // 位移矩阵
-        const transition = new Matrix4().set(
-            1, 0, 0, -vx,
-            0, 1, 0, -vy,
-            0, 0, 1, -vz,
-            0, 0, 0, 1
-        );
-
-        return rotation.multiply(transition).elements;
-    }
 
     return <canvas ref={canvasRef}/>
 }

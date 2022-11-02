@@ -1,3 +1,5 @@
+import {Matrix4, Vector3} from "three";
+
 function loadShader(gl, type, source) {
     //根据着色类型，建立着色器对象
     const shader = gl.createShader(type);
@@ -87,9 +89,45 @@ function buildLengthWidthEqualScale(canvas) {
     return squH / widthHeightRatio;
 }
 
+/**
+ * 根据视点坐标，目标点坐标，上方向 构建视图矩阵
+ * @param viewPoint   视点坐标
+ * @param targetPoint 目标点坐标
+ * @param upDirection 上方向
+ * https://juejin.cn/post/7067377496722767908
+ */
+function getViewMatrix(viewPoint, targetPoint, upDirection) {
+    //视线方向单位向量
+    let sight = new Vector3().subVectors(viewPoint, targetPoint).normalize();
+    //根据上方向和视线方向计算视线和上方向平面的法向量
+    let normalVector = new Vector3().crossVectors(upDirection, sight).normalize();
+    //根据上面求出的两个值计算垂直的上方向
+    let newUpDirection = new Vector3().crossVectors(sight, normalVector).normalize();
+
+    const {x: sx, y: sy, z: sz} = sight;
+    // 旋转矩阵
+    const rotation = new Matrix4().set(
+        ...normalVector, 0,
+        ...newUpDirection, 0,
+        -sx, -sy, -sz, 0,
+        0, 0, 0, 1);
+
+    const {x: vx, y: vy, z: vz} = viewPoint;
+    // 位移矩阵
+    const transition = new Matrix4().set(
+        1, 0, 0, -vx,
+        0, 1, 0, -vy,
+        0, 0, 1, -vz,
+        0, 0, 0, 1
+    );
+
+    return rotation.multiply(transition).elements;
+}
+
 export {
     initCanvas,
     initShaders,
+    getViewMatrix,
     cssPosition2WebGl,
     buildLengthWidthEqualScale,
     getWebGlPositionByMousePosition
