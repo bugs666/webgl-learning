@@ -15,7 +15,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
  * setWebGl: 初始化webgl方法
  * }
  */
-export function useInitWebGlContext({data, position, size = 2, flag = 'isPoints', pointIndex = []}) {
+export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPoints', pointIndex = []}) {
     let [originalVertexData, setOriginalVertexData] = useState(data);
     let [webgl, setWebGl] = useState(null);
     let vertexData = useMemo(() => {
@@ -36,7 +36,7 @@ export function useInitWebGlContext({data, position, size = 2, flag = 'isPoints'
         webgl.vertexAttribPointer(a_Position, size, webgl.FLOAT, false, 0, 0);
         //开启顶点数据的批处理，着色器默认只会一个一个接收顶点数据，逐个绘制
         webgl.enableVertexAttribArray(a_Position);
-        if (!!pointIndex.length) {
+        if (vertexData.length && !!pointIndex.length) {
             const indexBuffer = webgl.createBuffer();
             webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, pointIndex, webgl.STATIC_DRAW);
@@ -52,7 +52,7 @@ export function useInitWebGlContext({data, position, size = 2, flag = 'isPoints'
                 let isPoint = webgl.getUniformLocation(webgl.program, flag);
                 webgl.uniform1f(isPoint, type === 'POINTS');
             } finally {
-                if (pointIndex.length) {
+                if (vertexData.length && pointIndex.length) {
                     webgl.drawElements(webgl[type], pointIndex.length, webgl.UNSIGNED_BYTE, 0);
                 } else {
                     webgl.drawArrays(webgl[type], 0, count);
@@ -70,6 +70,7 @@ export function useInitWebGlContext({data, position, size = 2, flag = 'isPoints'
         addVertex,
         setWebGl,
         draw,
-        setData: setOriginalVertexData
+        setData: setOriginalVertexData,
+        vertexData: originalVertexData
     };
 }

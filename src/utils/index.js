@@ -79,9 +79,18 @@ function initCanvas(canvasNode) {
     return canvasNode;
 }
 
+//构建长宽等比例尺
+function buildLengthWidthEqualScale(canvas) {
+    const {width, height} = canvas;
+    const widthHeightRatio = width / height;
+    const squH = 1.0;
+    return squH / widthHeightRatio;
+}
+
 export {
     initCanvas,
     initShaders,
     cssPosition2WebGl,
+    buildLengthWidthEqualScale,
     getWebGlPositionByMousePosition
 };
