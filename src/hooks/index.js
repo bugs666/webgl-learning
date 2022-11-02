@@ -22,6 +22,10 @@ export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPo
         return new Float32Array(originalVertexData);
     }, [originalVertexData]);
 
+    let pointIndexData = useMemo(() => {
+        return new Uint8Array(pointIndex);
+    }, [pointIndex]);
+
     useEffect(() => {
         if (!webgl) return;
         let buffer = webgl.createBuffer();
@@ -36,12 +40,12 @@ export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPo
         webgl.vertexAttribPointer(a_Position, size, webgl.FLOAT, false, 0, 0);
         //开启顶点数据的批处理，着色器默认只会一个一个接收顶点数据，逐个绘制
         webgl.enableVertexAttribArray(a_Position);
-        if (vertexData.length && !!pointIndex.length) {
+        if (vertexData.length && !!pointIndexData.length) {
             const indexBuffer = webgl.createBuffer();
             webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, pointIndex, webgl.STATIC_DRAW);
         }
-    }, [webgl, vertexData]);
+    }, [webgl, vertexData, pointIndexData]);
 
     let draw = useCallback((types) => {
         if (!webgl) return;
@@ -52,14 +56,14 @@ export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPo
                 let isPoint = webgl.getUniformLocation(webgl.program, flag);
                 webgl.uniform1f(isPoint, type === 'POINTS');
             } finally {
-                if (vertexData.length && pointIndex.length) {
+                if (vertexData.length && pointIndexData.length) {
                     webgl.drawElements(webgl[type], pointIndex.length, webgl.UNSIGNED_BYTE, 0);
                 } else {
                     webgl.drawArrays(webgl[type], 0, count);
                 }
             }
         });
-    }, [webgl, vertexData]);
+    }, [webgl, vertexData, pointIndexData]);
 
     let addVertex = useCallback(data => {
         setOriginalVertexData([...originalVertexData, ...data]);
