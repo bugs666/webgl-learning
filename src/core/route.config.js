@@ -76,8 +76,13 @@ const routes = [
         children: [
             {
                 name: '视图矩阵',
-                path: 'common/compoundTransformation',
-                element: lazyLoad('CompoundTransformation')
+                path: 'common/viewMatrix',
+                element: lazyLoad('ViewMatrix')
+            },
+            {
+                name: '模型矩阵',
+                path: 'common/moduleMatrix',
+                element: lazyLoad('ModuleMatrix')
             }
         ]
     },

@@ -1,5 +1,6 @@
 /**
- * 平移变换
+ * 视图矩阵
+ * 从哪个点观察目标
  */
 import {useEffect, useRef} from "react";
 import {initShaders, initCanvas, buildLengthWidthEqualScale} from "../../utils";

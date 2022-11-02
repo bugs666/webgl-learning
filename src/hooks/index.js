@@ -7,13 +7,13 @@ import {useCallback, useEffect, useMemo, useState} from "react";
  * @param size     顶点数据构成尺寸（1,2,3,4）
  * @param flag     是否绘制点，兼容圆形点
  * @param pointIndex    顶点索引
- * @returns {
- * {webgl: webgl对象,
+ * @returns {{
+ * webgl: webgl对象,
  * setData: 设置顶点数据方法,
  * draw: 顶点数据,
  * addVertex: 更新顶点,
  * setWebGl: 初始化webgl方法
- * }
+ * }}
  */
 export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPoints', pointIndex = []}) {
     let [originalVertexData, setOriginalVertexData] = useState(data);
