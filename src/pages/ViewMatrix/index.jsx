@@ -49,7 +49,7 @@ function MultiPoint() {
             -0.2, 0.2, -0.2,
             -0.2, -0.2, -0.2];
         let newData = data.map((it, index) => {
-            return index % 3 === 0 ? it * scale : it;
+            return index % 3 === 0 || (index + 1) % 3 === 0 ? it * scale : it;
         });
         setData(newData);
     };

@@ -11,6 +11,7 @@ import {Matrix4, Vector3} from 'three';
 
 function MultiPoint() {
     let canvasRef = useRef();
+    let rotateRef = useRef(0);
     let {setWebGl, draw, webgl, setData} = useInitWebGlContext({
         data: [],
         position: 'a_Position',
@@ -49,7 +50,7 @@ function MultiPoint() {
             -0.2, 0.2, -0.2,
             -0.2, -0.2, -0.2];
         let newData = data.map((it, index) => {
-            return index % 3 === 0 ? it * scale : it;
+            return index % 3 === 0 || (index + 1) % 3 === 0 ? it * scale : it;
         });
         setData(newData);
     };
@@ -80,10 +81,18 @@ function MultiPoint() {
             new Vector3(0.0, 0.1, 0),
             new Vector3(0, 1, 0)
         )
-        let matVal = webgl.getUniformLocation(webgl.program, 'u_mat');
-        webgl.uniformMatrix4fv(matVal, false, viewMatrix);
-        draw(['LINES']);
-    }, [webgl]);
+        let viewMat = webgl.getUniformLocation(webgl.program, 'u_ViewMat');
+        webgl.uniformMatrix4fv(viewMat, false, viewMatrix);
+        let moduleMat = webgl.getUniformLocation(webgl.program, 'u_ModuleMat');
+        let moduleMatrix = new Matrix4();
+        (function ani() {
+            rotateRef.current += 0.01;
+            moduleMatrix.makeRotationY(rotateRef.current);
+            webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.elements);
+            draw(['LINES']);
+            requestAnimationFrame(ani);
+        })();
+    });
 
     /**
      * 根据视点坐标，目标点坐标，上方向 构建视图矩阵
