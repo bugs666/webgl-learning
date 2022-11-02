@@ -8,6 +8,7 @@ import VERTEX_SHADER from "../../shaders/MatrixShaders/Vertex.glsl";
 import FRAGMENT_SHADER from '../../shaders/MultipleShaders/CircleFragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
 import {Matrix4, Vector3} from 'three';
+import {CUBIC_DATA, POINT_INDEXES} from "../../constant";
 
 function MultiPoint() {
     let canvasRef = useRef();
@@ -15,22 +16,7 @@ function MultiPoint() {
         data: [],
         position: 'a_Position',
         size: 3,
-        pointIndex: new Uint8Array([
-            0, 1,
-            1, 2,
-            2, 3,
-            3, 0,
-
-            0, 5,
-            1, 6,
-            2, 7,
-            3, 4,
-
-            4, 5,
-            5, 6,
-            6, 7,
-            7, 4
-        ])
+        pointIndex: POINT_INDEXES
     });
 
     useEffect(() => {
@@ -40,15 +26,7 @@ function MultiPoint() {
 
     const rebuildData = canvas => {
         let scale = buildLengthWidthEqualScale(canvas);
-        const data = [0.2, 0.2, 0.2,
-            -0.2, 0.2, 0.2,
-            -0.2, -0.2, 0.2,
-            0.2, -0.2, 0.2,
-            0.2, -0.2, -0.2,
-            0.2, 0.2, -0.2,
-            -0.2, 0.2, -0.2,
-            -0.2, -0.2, -0.2];
-        let newData = data.map((it, index) => {
+        let newData = CUBIC_DATA.map((it, index) => {
             return index % 3 === 0 || (index + 1) % 3 === 0 ? it * scale : it;
         });
         setData(newData);

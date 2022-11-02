@@ -43,7 +43,7 @@ export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPo
         if (vertexData.length && !!pointIndexData.length) {
             const indexBuffer = webgl.createBuffer();
             webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, pointIndex, webgl.STATIC_DRAW);
+            webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, pointIndexData, webgl.STATIC_DRAW);
         }
     }, [webgl, vertexData, pointIndexData]);
 
