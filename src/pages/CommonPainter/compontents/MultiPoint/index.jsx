@@ -2,10 +2,10 @@
  * 绘制多点，（三角形,线段，闭合单线图形）
  */
 import {useEffect, useRef} from "react";
-import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../utils";
-import VERTEX_SHADER from "../../shaders/MultipleShaders/Vertex.glsl";
-import FRAGMENT_SHADER from '../../shaders/MultipleShaders/CircleFragment.glsl';
-import {useInitWebGlContext} from "../../hooks";
+import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../../../utils";
+import VERTEX_SHADER from "@shader/MultipleShaders/Vertex.glsl";
+import FRAGMENT_SHADER from '@shader/MultipleShaders/CircleFragment.glsl';
+import {useInitWebGlContext} from "../../../../hooks";
 
 function MultiPoint() {
     let canvasRef = useRef();

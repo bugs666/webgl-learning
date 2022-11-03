@@ -8,23 +8,25 @@ const lazyLoad = (module) => {
 const routes = [
     {
         name: '基础绘图',
-        children: [
-            {
-                name: '绘制单个点',
-                path: 'common/singlePoint',
-                element: lazyLoad('SinglePoint')
-            },
-            {
-                name: '绘制多点',
-                path: 'common/multiPoint',
-                element: lazyLoad('MultiPoint')
-            },
-            {
-                name: '绘制矩形面',
-                path: 'common/rectangularFace',
-                element: lazyLoad('RectangularFace')
-            }
-        ]
+        path: 'common',
+        element: lazyLoad('CommonPainter'),
+        // children: [
+        //     {
+        //         name: '绘制单个点',
+        //         path: 'common/singlePoint',
+        //         element: lazyLoad('SinglePoint')
+        //     },
+        //     {
+        //         name: '绘制多点',
+        //         path: 'common/multiPoint',
+        //         element: lazyLoad('MultiPoint')
+        //     },
+        //     {
+        //         name: '绘制矩形面',
+        //         path: 'common/rectangularFace',
+        //         element: lazyLoad('RectangularFace')
+        //     }
+        // ]
     },
     {
         name: '复杂绘图',

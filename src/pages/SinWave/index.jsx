@@ -30,7 +30,8 @@ function MultiPoint() {
         if (!webgl) return;
         const viewMatrix = new Matrix4().lookAt(
             new Vector3(0.2, 1, 1),
-            new Vector3(0.0, 0.1, 0),
+            // new Vector3(0, -1, 1),
+            new Vector3(0.0, 0, 0),
             new Vector3(0, 1, 0)
         );
         let matVal = webgl.getUniformLocation(webgl.program, 'u_ViewMat');

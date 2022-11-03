@@ -3,9 +3,9 @@
  * 绘制圆形顶点
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, getWebGlPositionByMousePosition, initCanvas} from "../../utils";
-import COMMON_VERTEX_SHADER from "../../shaders/CommonShaders/CommonVertex.glsl";
-import CIRCLE_FRAGMENT_SHADER from '../../shaders/CircleShader/CircleFragment.glsl';
+import {initShaders, getWebGlPositionByMousePosition, initCanvas} from "../../../../utils";
+import COMMON_VERTEX_SHADER from "@shader/CommonShaders/CommonVertex.glsl";
+import CIRCLE_FRAGMENT_SHADER from '@shader/CircleShader/CircleFragment.glsl';
 
 function SinglePoint() {
     let canvasRef = useRef();

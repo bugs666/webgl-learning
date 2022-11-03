@@ -2,9 +2,9 @@
  * 绘制简单几何面，（绘制多个三角面进行拼接）
  */
 import {useEffect, useRef, useState} from "react";
-import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../utils";
-import VERTEX_SHADER from "../../shaders/MultipleShaders/Vertex.glsl";
-import FRAGMENT_SHADER from '../../shaders/MultipleShaders/Fragment.glsl';
+import {initShaders, initCanvas, getWebGlPositionByMousePosition} from "../../../../utils";
+import VERTEX_SHADER from "@shader/MultipleShaders/Vertex.glsl";
+import FRAGMENT_SHADER from '@shader/MultipleShaders/Fragment.glsl';
 
 function RectangularFace() {
     let canvasRef = useRef();
