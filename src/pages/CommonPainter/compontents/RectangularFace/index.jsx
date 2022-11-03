@@ -28,7 +28,7 @@ function RectangularFace() {
 
         //获取canvas元素并设置宽高
         const canvasNode = canvasRef.current;
-        let canvas = initCanvas(canvasNode);
+        let canvas = initCanvas(canvasNode,'painter-container');
 
         //获取webgl画笔
         return canvas.getContext('webgl');

@@ -74,8 +74,8 @@ function buildLinearScale(x1, x2, y1, y2) {
     }
 }
 
-function initCanvas(canvasNode) {
-    let {width, height} = document.getElementsByClassName('site-layout-background')?.[0]?.getBoundingClientRect();
+function initCanvas(canvasNode, containerName = 'site-layout-background') {
+    let {width, height} = document.getElementsByClassName(containerName)?.[0]?.getBoundingClientRect();
     canvasNode.width = width;
     canvasNode.height = height;
     return canvasNode;
