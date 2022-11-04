@@ -71,7 +71,7 @@ function MultiColorPoint() {
         webGl.enableVertexAttribArray(aColor);
 
         webGl.clear(webGl.COLOR_BUFFER_BIT);
-        webGl.drawArrays(webGl.POINTS, 0, dataSize);
+        webGl.drawArrays(webGl.TRIANGLES, 0, dataSize);
 
     }, [webGl]);
 

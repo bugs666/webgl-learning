@@ -75,6 +75,6 @@ export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPo
         setWebGl,
         draw,
         setData: setOriginalVertexData,
-        vertexData: originalVertexData
+        verticesData: originalVertexData
     };
 }

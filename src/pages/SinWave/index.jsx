@@ -7,7 +7,9 @@ import {Matrix4, Vector3} from 'three';
 
 function MultiPoint() {
     let canvasRef = useRef();
-    let {setWebGl, draw, webgl, setData} = useInitWebGlContext({
+    let phiRef = useRef(0);
+
+    let {setWebGl, draw, webgl, setData, verticesData} = useInitWebGlContext({
         data: [],
         position: 'a_Position',
         size: 3
@@ -30,14 +32,18 @@ function MultiPoint() {
         if (!webgl) return;
         const viewMatrix = new Matrix4().lookAt(
             new Vector3(0.2, 1, 1),
-            // new Vector3(0, -1, 1),
-            new Vector3(0.0, 0, 0),
+            new Vector3(),
             new Vector3(0, 1, 0)
         );
         let matVal = webgl.getUniformLocation(webgl.program, 'u_ViewMat');
         webgl.uniformMatrix4fv(matVal, false, viewMatrix.elements);
+        // (function ani() {
+        //     // phiRef.current += 0.08;
+        //     requestAnimationFrame(ani);
+        // })();
+        // rebuildData(verticesData);
         draw(['POINTS']);
-    }, [webgl]);
+    });
 
     const getXAndZScale = () => {
         let [minX, maxX, minZ, maxZ] = [-0.8, 0.7, -0.9, 0.9];
@@ -62,7 +68,9 @@ function MultiPoint() {
         for (let i = 0, j = data.length; i < j; i += 3) {
             const [x, z] = [data[i], data[i + 2]];
             // y = A*sin(w * x+ angle) 三角函数
-            data[i + 1] = 0.05 * Math.sin(2 * zScale(z) + xScale(x)) + 0.03;
+            let a = 0.1 * Math.sin(zScale(z)) + 0.03;
+            let offset = xScale(x) + phiRef?.current || 0;
+            data[i + 1] = a * Math.sin(2 * zScale(z) + offset);
         }
     }
 
