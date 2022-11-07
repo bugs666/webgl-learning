@@ -9,9 +9,7 @@ function MultiPoint() {
     let canvasRef = useRef();
     let phiRef = useRef(0);
 
-    let {setWebGl, draw, webgl, setData, verticesData} = useInitWebGlContext({
-        data: [],
-        position: 'a_Position',
+    let {setWebGl, draw, webgl, setData, verticesData, updateBuffer} = useInitWebGlContext({
         size: 3
     });
 
@@ -37,12 +35,14 @@ function MultiPoint() {
         );
         let matVal = webgl.getUniformLocation(webgl.program, 'u_ViewMat');
         webgl.uniformMatrix4fv(matVal, false, viewMatrix.elements);
-        // (function ani() {
-        //     // phiRef.current += 0.08;
-        //     requestAnimationFrame(ani);
-        // })();
-        // rebuildData(verticesData);
-        draw(['POINTS']);
+        (function ani() {
+            phiRef.current += 0.08;
+            rebuildData(verticesData);
+            setData(verticesData);
+            updateBuffer(verticesData);
+            draw(['POINTS']);
+            requestAnimationFrame(ani);
+        })();
     });
 
     const getXAndZScale = () => {
@@ -86,7 +86,12 @@ function MultiPoint() {
         return canvas.getContext('webgl');
     }
 
-    return <canvas ref={canvasRef}/>
+    function render() {
+        console.log(123);
+        return <canvas ref={canvasRef}/>
+    }
+
+    return render();
 }
 
 export default MultiPoint;

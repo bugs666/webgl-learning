@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 /**
  * 初始化webgl
@@ -15,19 +15,19 @@ import {useCallback, useEffect, useMemo, useState} from "react";
  * setWebGl: 初始化webgl方法
  * }}
  */
-export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPoints', pointIndex = []}) {
-    let [originalVertexData, setOriginalVertexData] = useState(data);
+export function useInitWebGlContext({data = [], position='a_Position', size = 2, flag = 'isPoints', pointIndex = []}) {
+    let originalVertexDataRef = useRef(data);
     let [webgl, setWebGl] = useState(null);
     let vertexData = useMemo(() => {
-        return new Float32Array(originalVertexData);
-    }, [originalVertexData]);
+        return new Float32Array(originalVertexDataRef?.current ?? []);
+    }, [originalVertexDataRef.current]);
 
     let pointIndexData = useMemo(() => {
         return new Uint8Array(pointIndex);
     }, [pointIndex]);
 
     useEffect(() => {
-        if (!webgl) return;
+        if (!webgl || !vertexData) return;
         let buffer = webgl.createBuffer();
         webgl.bindBuffer(webgl.ARRAY_BUFFER, buffer);
         webgl.bufferData(webgl.ARRAY_BUFFER, vertexData, webgl.STATIC_DRAW);
@@ -45,7 +45,11 @@ export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPo
             webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, pointIndexData, webgl.STATIC_DRAW);
         }
-    }, [webgl, vertexData, pointIndexData]);
+    }, [webgl, pointIndexData]);
+
+    let setOriginalVertexData = vertices => {
+        originalVertexDataRef.current = vertices;
+    };
 
     let draw = useCallback((types) => {
         if (!webgl) return;
@@ -66,15 +70,22 @@ export function useInitWebGlContext({data = [], position, size = 2, flag = 'isPo
     }, [webgl, vertexData, pointIndexData]);
 
     let addVertex = useCallback(data => {
-        setOriginalVertexData([...originalVertexData, ...data]);
-    }, [originalVertexData]);
+        let newData = (originalVertexDataRef?.current ?? []).concat(data);
+        setOriginalVertexData(newData);
+    }, [originalVertexDataRef.current]);
+
+    let updateBuffer = useCallback(vertices => {
+        setOriginalVertexData(vertices);
+        webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(vertices), webgl.STATIC_DRAW);
+    }, [webgl]);
 
     return {
         webgl,
         addVertex,
         setWebGl,
+        updateBuffer,
         draw,
         setData: setOriginalVertexData,
-        verticesData: originalVertexData
+        verticesData: originalVertexDataRef.current
     };
 }
