@@ -4,9 +4,11 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
  * 初始化webgl
  * @param data  顶点数据
  * @param position 着色器顶点位置变量
+ * @param color    着色器颜色属性
  * @param size     顶点数据构成尺寸（1,2,3,4）
  * @param flag     是否绘制点，兼容圆形点
  * @param pointIndex    顶点索引
+ * @param dataIsMulti   源数据是否多属性合一
  * @returns {{
  * webgl: Object,
  * setData: function(Array):void 设置顶点数据方法,

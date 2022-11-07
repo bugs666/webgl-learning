@@ -1,16 +1,16 @@
 import {useEffect, useRef} from "react";
 import {initShaders, initCanvas, buildLinearScale} from "../../utils";
 import VERTEX_SHADER from "../../shaders/MatrixShaders/WaveVertex.glsl";
-import FRAGMENT_SHADER from '../../shaders/MultipleShaders/CircleFragment.glsl';
+import FRAGMENT_SHADER from '../../shaders/MatrixShaders/Fragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
-import {Matrix4, Vector3} from 'three';
+import {Matrix4, Vector3, Color} from 'three';
 
 function MultiPoint() {
     let canvasRef = useRef();
     let phiRef = useRef(0);
 
     let {setWebGl, draw, webgl, setData, verticesData, updateBuffer} = useInitWebGlContext({
-        size: 3
+        dataIsMulti: true
     });
 
     useEffect(() => {
@@ -45,12 +45,14 @@ function MultiPoint() {
         })();
     });
 
-    const getXAndZScale = () => {
+    const getXYAndZScale = () => {
         let [minX, maxX, minZ, maxZ] = [-0.8, 0.7, -0.9, 0.9];
         let [minAngX, maxAngX, minAngZ, maxAngZ] = [0, Math.PI * 4, 0, Math.PI * 2];
+        let [minY, maxY, minG, maxG] = [-0.13, 0.13, 0.15, 0.5];
         const zScale = buildLinearScale(minZ, maxZ, minAngZ, maxAngZ);
         const xScale = buildLinearScale(minX, maxX, minAngX, maxAngX);
-        return [xScale, zScale];
+        const yScale = buildLinearScale(minY, maxY, minG, maxG);
+        return [xScale, zScale, yScale];
     }
 
     const initData = () => {
@@ -58,19 +60,24 @@ function MultiPoint() {
         let [minX, maxX, minZ, maxZ] = [-0.8, 0.7, -0.9, 0.9];
         for (let z = minZ; z < maxZ; z += 0.04) {
             for (let x = minX; x < maxX; x += 0.04) {
-                newData.push(x, 0, z);
+                newData.push(x, 0, z, 0.5, 1, 0.6, 1);
             }
         }
         return newData;
     };
     const rebuildData = data => {
-        let [xScale, zScale] = getXAndZScale();
-        for (let i = 0, j = data.length; i < j; i += 3) {
+        let [xScale, zScale, yScale] = getXYAndZScale();
+        for (let i = 0, j = data.length; i < j; i += 7) {
             const [x, z] = [data[i], data[i + 2]];
             // y = A*sin(w * x+ angle) 三角函数
             let a = 0.1 * Math.sin(zScale(z)) + 0.03;
             let offset = xScale(x) + phiRef?.current || 0;
-            data[i + 1] = a * Math.sin(2 * zScale(z) + offset);
+            const y = a * Math.sin(2 * zScale(z) + offset);
+            const {r, g, b} = new Color().setHSL(yScale(y), 1, 0.6);
+            data[i + 1] = y;
+            data[i + 3] = r;
+            data[i + 4] = g;
+            data[i + 5] = b;
         }
     }
 
