@@ -8,14 +8,24 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
  * @param flag     是否绘制点，兼容圆形点
  * @param pointIndex    顶点索引
  * @returns {{
- * webgl: webgl对象,
- * setData: 设置顶点数据方法,
- * draw: 顶点数据,
- * addVertex: 更新顶点,
- * setWebGl: 初始化webgl方法
+ * webgl: Object,
+ * setData: function(Array):void 设置顶点数据方法,
+ * draw: function(Array<String>):void 绘制方法,
+ * addVertex: function(Array<Number>):void 追加顶点数据,
+ * setWebGl: function(Object):void 初始化webgl方法
  * }}
  */
-export function useInitWebGlContext({data = [], position='a_Position', size = 2, flag = 'isPoints', pointIndex = []}) {
+export function useInitWebGlContext(
+    {
+        data = [],
+        position = 'a_Position',
+        color = 'a_Color',
+        size = 2,
+        flag = 'isPoints',
+        pointIndex = [],
+        dataIsMulti = false
+    }
+) {
     let originalVertexDataRef = useRef(data);
     let [webgl, setWebGl] = useState(null);
     let vertexData = useMemo(() => {
@@ -26,20 +36,53 @@ export function useInitWebGlContext({data = [], position='a_Position', size = 2,
         return new Uint8Array(pointIndex);
     }, [pointIndex]);
 
+    const initVertices = webglContext => {
+        if (!dataIsMulti) {
+            let buffer = webglContext.createBuffer();
+            webglContext.bindBuffer(webglContext.ARRAY_BUFFER, buffer);
+            webglContext.bufferData(webglContext.ARRAY_BUFFER, vertexData, webglContext.STATIC_DRAW);
+            let a_Position = webglContext.getAttribLocation(webglContext.program, position);
+
+            /**
+             * 从指定的缓冲区中读取数据，
+             * 用法：https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
+             */
+            webglContext.vertexAttribPointer(a_Position, size, webglContext.FLOAT, false, 0, 0);
+            //开启顶点数据的批处理，着色器默认只会一个一个接收顶点数据，逐个绘制
+            webglContext.enableVertexAttribArray(a_Position);
+            return;
+        }
+        //系列尺寸(点，颜色)，点数据字节索引——0
+        let pointSize = 3, colorSize = 4, pointByteIndex = 0;
+        //元素字节数
+        let eleBytes = vertexData.BYTES_PER_ELEMENT;
+        //类目尺寸(一条完整的数据包含的信息个数)
+        let catalogSize = pointSize + colorSize;
+        //类目字节数
+        let catalogBytes = catalogSize * eleBytes;
+        //颜色数据字节索引位置
+        let colorByteIndex = pointSize * eleBytes;
+        // 顶点总数
+        let dataSize = data.length / catalogSize;
+
+        let sourceBuffer = webglContext.createBuffer();
+        webglContext.bindBuffer(webglContext.ARRAY_BUFFER, sourceBuffer);
+        webglContext.bufferData(webglContext.ARRAY_BUFFER, vertexData, webglContext.STATIC_DRAW);
+
+        let aPosition = webglContext.getAttribLocation(webglContext.program, position);
+        let aColor = webglContext.getAttribLocation(webglContext.program, color);
+        /**
+         * 顶点着色器中的a_Position变量从数据源中查找自己的数据
+         */
+        webglContext.vertexAttribPointer(aPosition, pointSize, webglContext.FLOAT, false, catalogBytes, pointByteIndex);
+        webglContext.vertexAttribPointer(aColor, colorSize, webglContext.FLOAT, false, catalogBytes, colorByteIndex);
+        webglContext.enableVertexAttribArray(aPosition);
+        webglContext.enableVertexAttribArray(aColor);
+    }
+
     useEffect(() => {
         if (!webgl || !vertexData) return;
-        let buffer = webgl.createBuffer();
-        webgl.bindBuffer(webgl.ARRAY_BUFFER, buffer);
-        webgl.bufferData(webgl.ARRAY_BUFFER, vertexData, webgl.STATIC_DRAW);
-        let a_Position = webgl.getAttribLocation(webgl.program, position);
-
-        /**
-         * 从指定的缓冲区中读取数据，
-         * 用法：https://developer.mozilla.org/zh-CN/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
-         */
-        webgl.vertexAttribPointer(a_Position, size, webgl.FLOAT, false, 0, 0);
-        //开启顶点数据的批处理，着色器默认只会一个一个接收顶点数据，逐个绘制
-        webgl.enableVertexAttribArray(a_Position);
+        initVertices(webgl);
         if (vertexData.length && !!pointIndexData.length) {
             const indexBuffer = webgl.createBuffer();
             webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -54,7 +97,7 @@ export function useInitWebGlContext({data = [], position='a_Position', size = 2,
     let draw = useCallback((types) => {
         if (!webgl) return;
         webgl.clear(webgl.COLOR_BUFFER_BIT);
-        const count = vertexData.length / size;
+        const count = dataIsMulti ? vertexData.length / 7 : vertexData.length / size;
         types.forEach(type => {
             try {
                 let isPoint = webgl.getUniformLocation(webgl.program, flag);

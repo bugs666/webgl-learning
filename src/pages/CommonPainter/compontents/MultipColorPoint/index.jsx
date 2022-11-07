@@ -7,16 +7,20 @@ import {useEffect, useRef, useState} from "react";
 import {initShaders, initCanvas} from "../../../../utils";
 import VERTEX_SHADER from "@shader/MultipleColor/Vertex.glsl";
 import FRAGMENT_SHADER from '@shader/MultipleColor/Fragment.glsl';
+import {useInitWebGlContext} from "../../../../hooks";
 
 function MultiColorPoint() {
     let canvasRef = useRef();
-    let [pointData] = useState(new Float32Array([
-        0, 0.5, 0, 1, 0, 0, 1,
-        -0.2, -0.4, 0, 0, 1, 0, 1,
-        0.2, -0.4, 0, 0, 0, 1, 1
-    ]));
-
-    let [webGl, setWebGl] = useState(null);
+    let {setWebGl, draw, webgl: webGl} = useInitWebGlContext(
+        {
+            data: [
+                0, 0.5, 0, 1, 0, 0, 1,
+                -0.2, -0.4, 0, 0, 1, 0, 1,
+                0.2, -0.4, 0, 0, 0, 1, 1
+            ],
+            dataIsMulti: true
+        }
+    );
 
     useEffect(() => {
         window.onresize = extracted;
@@ -42,38 +46,9 @@ function MultiColorPoint() {
     }, []);
 
     useEffect(() => {
-        if (!webGl) return;
-        //系列尺寸(点，颜色)，点数据字节索引——0
-        let pointSize = 3, colorSize = 4, pointByteIndex = 0;
-        //元素字节数
-        let eleBytes = pointData.BYTES_PER_ELEMENT;
-        //类目尺寸(一条完整的数据包含的信息个数)
-        let catalogSize = pointSize + colorSize;
-        //类目字节数
-        let catalogBytes = catalogSize * eleBytes;
-        //颜色数据字节索引位置
-        let colorByteIndex = pointSize * eleBytes;
-        // 顶点总数
-        let dataSize = pointData.length / catalogSize;
+        draw(['TRIANGLES']);
 
-        let sourceBuffer = webGl.createBuffer();
-        webGl.bindBuffer(webGl.ARRAY_BUFFER, sourceBuffer);
-        webGl.bufferData(webGl.ARRAY_BUFFER, pointData, webGl.STATIC_DRAW);
-
-        let aPosition = webGl.getAttribLocation(webGl.program, 'a_Position');
-        let aColor = webGl.getAttribLocation(webGl.program, 'a_Color');
-        /**
-         * 顶点着色器中的a_Position变量从数据源中查找自己的数据
-         */
-        webGl.vertexAttribPointer(aPosition, pointSize, webGl.FLOAT, false, catalogBytes, pointByteIndex);
-        webGl.vertexAttribPointer(aColor, colorSize, webGl.FLOAT, false, catalogBytes, colorByteIndex);
-        webGl.enableVertexAttribArray(aPosition);
-        webGl.enableVertexAttribArray(aColor);
-
-        webGl.clear(webGl.COLOR_BUFFER_BIT);
-        webGl.drawArrays(webGl.TRIANGLES, 0, dataSize);
-
-    }, [webGl]);
+    });
 
     return <canvas ref={canvasRef}/>
 }
