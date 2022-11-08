@@ -47,7 +47,6 @@ function MultiColorPoint() {
 
     useEffect(() => {
         draw(['TRIANGLES']);
-
     });
 
     return <canvas ref={canvasRef}/>

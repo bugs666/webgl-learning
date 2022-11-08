@@ -9,6 +9,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
  * @param flag     是否绘制点，兼容圆形点
  * @param pointIndex    顶点索引
  * @param dataIsMulti   源数据是否多属性合一
+ * @param attrConf      源数据信息
  * @returns {{
  * webgl: Object,
  * setData: function(Array):void 设置顶点数据方法,
@@ -25,7 +26,11 @@ export function useInitWebGlContext(
         size = 2,
         flag = 'isPoints',
         pointIndex = [],
-        dataIsMulti = false
+        dataIsMulti = false,
+        attrConf = [
+            {attrName: 'a_Position', dataSize: 3},
+            {attrName: 'a_Color', dataSize: 4}
+        ]
     }
 ) {
     let originalVertexDataRef = useRef(data);
@@ -37,6 +42,17 @@ export function useInitWebGlContext(
     let pointIndexData = useMemo(() => {
         return new Uint8Array(pointIndex);
     }, [pointIndex]);
+
+    const initAttrInfo = () => {
+
+        const res = [];
+        for (let i = 0; i < attrConf.length; i++) {
+            let {attrName, dataSize} = attrConf[i];
+            res.push(dataSize, attrName);
+        }
+
+        return res;
+    }
 
     const initVertices = webglContext => {
         if (!dataIsMulti) {
@@ -55,7 +71,8 @@ export function useInitWebGlContext(
             return;
         }
         //系列尺寸(点，颜色)，点数据字节索引——0
-        let pointSize = 3, colorSize = 4, pointByteIndex = 0;
+        const attrInfo = initAttrInfo();
+        let pointSize = attrInfo[0], colorSize = attrInfo[2], pointByteIndex = 0;
         //元素字节数
         let eleBytes = vertexData.BYTES_PER_ELEMENT;
         //类目尺寸(一条完整的数据包含的信息个数)
@@ -71,8 +88,8 @@ export function useInitWebGlContext(
         webglContext.bindBuffer(webglContext.ARRAY_BUFFER, sourceBuffer);
         webglContext.bufferData(webglContext.ARRAY_BUFFER, vertexData, webglContext.STATIC_DRAW);
 
-        let aPosition = webglContext.getAttribLocation(webglContext.program, position);
-        let aColor = webglContext.getAttribLocation(webglContext.program, color);
+        let aPosition = webglContext.getAttribLocation(webglContext.program, attrInfo[1]);
+        let aColor = webglContext.getAttribLocation(webglContext.program, attrInfo[3]);
         /**
          * 顶点着色器中的a_Position变量从数据源中查找自己的数据
          */
@@ -99,7 +116,10 @@ export function useInitWebGlContext(
     let draw = useCallback((types) => {
         if (!webgl) return;
         webgl.clear(webgl.COLOR_BUFFER_BIT);
-        const count = dataIsMulti ? vertexData.length / 7 : vertexData.length / size;
+        const sourceSize = attrConf.reduce((a, b) => {
+            return a + b.dataSize
+        }, 0);
+        const count = dataIsMulti ? vertexData.length / sourceSize : vertexData.length / size;
         types.forEach(type => {
             try {
                 let isPoint = webgl.getUniformLocation(webgl.program, flag);
