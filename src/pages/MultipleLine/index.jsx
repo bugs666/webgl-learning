@@ -10,7 +10,7 @@ import {SQUARE_PATH_DATA} from "../../constant";
 
 function MultiPoint() {
     let canvasRef = useRef();
-    let {addVertex, setWebGl, draw} = useInitWebGlContext({data:[], position:'a_Position'});
+    let {addVertex, setWebGl, draw} = useInitWebGlContext({});
 
     function initSquareData(canvas) {
         const {width, height} = canvas;

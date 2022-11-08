@@ -12,16 +12,6 @@ const routes = [
         element: lazyLoad('CommonPainter')
     },
     {
-        name: '复杂绘图',
-        children: [
-            {
-                name: '图形转面',
-                path: 'common/multipleLine',
-                element: lazyLoad('MultipleLine')
-            }
-        ]
-    },
-    {
         name: '简单效果',
         children: [
             {

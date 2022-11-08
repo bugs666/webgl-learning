@@ -19,8 +19,6 @@ function MultiPoint() {
     //运动速度
     let vyRef = useRef(0);
     let {setWebGl, draw, webgl, setData} = useInitWebGlContext({
-        data: [],
-        position: 'a_Position',
         size: 3,
         pointIndex: POINT_INDEXES
     });

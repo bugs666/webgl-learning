@@ -14,7 +14,6 @@ function MultiPoint() {
     let canvasRef = useRef();
     let {setWebGl, draw, webgl, setData} = useInitWebGlContext({
         data: [],
-        position: 'a_Position',
         size: 3,
         pointIndex: POINT_INDEXES
     });
