@@ -34,6 +34,7 @@ function TextureMap() {
         const canvasNode = canvasRef.current;
         let canvas = initCanvas(canvasNode, 'painter-container');
         let scale = buildLengthWidthEqualScale(canvas);
+        // webgl点位信息，纹理坐标点位（图像的四哥顶点）
         setData([
             -0.5 * scale, 0.5, 0.0, 1.0,
             -0.5 * scale, -0.5, 0.0, 0.0,
