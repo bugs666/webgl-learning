@@ -81,8 +81,6 @@ export function useInitWebGlContext(
         let catalogBytes = catalogSize * eleBytes;
         //颜色数据字节索引位置
         let colorByteIndex = pointSize * eleBytes;
-        // 顶点总数
-        let dataSize = data.length / catalogSize;
 
         let sourceBuffer = webglContext.createBuffer();
         webglContext.bindBuffer(webglContext.ARRAY_BUFFER, sourceBuffer);
@@ -112,7 +110,6 @@ export function useInitWebGlContext(
     let setOriginalVertexData = vertices => {
         originalVertexDataRef.current = vertices;
     };
-
     let draw = useCallback((types) => {
         if (!webgl) return;
         webgl.clear(webgl.COLOR_BUFFER_BIT);
