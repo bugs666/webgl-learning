@@ -66,13 +66,18 @@ const routes = [
         children: [
             {
                 name: '绘制星空',
-                path: 'common/renderStar',
+                path: 'demo/renderStar',
                 element: lazyLoad('RandomStar')
             },
             {
                 name: '波浪',
-                path: 'common/wave',
+                path: 'demo/wave',
                 element: lazyLoad('SinWave')
+            },
+            {
+                name: '魔方',
+                path: 'demo/rubiksCube',
+                element: lazyLoad('RubiksCube')
             }
         ]
 

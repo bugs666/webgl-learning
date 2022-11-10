@@ -2,6 +2,7 @@ let path = require('path');
 
 const pageRootUrl = path.resolve(__dirname, 'src/pages');
 const shaderRootUrl = path.resolve(__dirname, 'src/shaders');
+const assetsUrl = path.resolve(__dirname, 'src/assets');
 
 module.exports = function override(config) {
     const {module: {rules: rules}, resolve, resolve: {alias}} = config;
@@ -22,7 +23,8 @@ module.exports = function override(config) {
             alias: {
                 ...alias,
                 '@page': pageRootUrl,
-                '@shader': shaderRootUrl
+                '@shader': shaderRootUrl,
+                '@assets': assetsUrl,
             }
         }
     }
