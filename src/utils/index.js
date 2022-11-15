@@ -124,7 +124,21 @@ function getViewMatrix(viewPoint, targetPoint, upDirection) {
     return rotation.multiply(transition).elements;
 }
 
+function loadImage(url) {
+    const image = new Image();
+    image.src = url;
+    return new Promise((resolve, reject) => {
+        image.onload = function () {
+            return resolve(image);
+        }
+        image.onerror = function () {
+            return reject('图片加载失败');
+        }
+    });
+}
+
 export {
+    loadImage,
     initCanvas,
     initShaders,
     getViewMatrix,

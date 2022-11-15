@@ -17,6 +17,49 @@ function MultiPoint() {
         attrConf: [
             {attrName: 'a_Position', dataSize: 3},
             {attrName: 'a_Pin', dataSize: 2}
+        ],
+        data: [
+            -0.5, -0.5, -0.5, 0, 0,
+            -0.5, 0.5, -0.5, 0, 0.5,
+            0.5, -0.5, -0.5, 0.25, 0,
+            -0.5, 0.5, -0.5, 0, 0.5,
+            0.5, 0.5, -0.5, 0.25, 0.5,
+            0.5, -0.5, -0.5, 0.25, 0,
+
+            -0.5, -0.5, 0.5, 0.25, 0,
+            0.5, -0.5, 0.5, 0.5, 0,
+            -0.5, 0.5, 0.5, 0.25, 0.5,
+            -0.5, 0.5, 0.5, 0.25, 0.5,
+            0.5, -0.5, 0.5, 0.5, 0,
+            0.5, 0.5, 0.5, 0.5, 0.5,
+
+            -0.5, 0.5, -0.5, 0.5, 0,
+            -0.5, 0.5, 0.5, 0.5, 0.5,
+            0.5, 0.5, -0.5, 0.75, 0,
+            -0.5, 0.5, 0.5, 0.5, 0.5,
+            0.5, 0.5, 0.5, 0.75, 0.5,
+            0.5, 0.5, -0.5, 0.75, 0,
+
+            -0.5, -0.5, -0.5, 0, 0.5,
+            0.5, -0.5, -0.5, 0.25, 0.5,
+            -0.5, -0.5, 0.5, 0, 1,
+            -0.5, -0.5, 0.5, 0, 1,
+            0.5, -0.5, -0.5, 0.25, 0.5,
+            0.5, -0.5, 0.5, 0.25, 1,
+
+            -0.5, -0.5, -0.5, 0.25, 0.5,
+            -0.5, -0.5, 0.5, 0.25, 1,
+            -0.5, 0.5, -0.5, 0.5, 0.5,
+            -0.5, -0.5, 0.5, 0.25, 1,
+            -0.5, 0.5, 0.5, 0.5, 1,
+            -0.5, 0.5, -0.5, 0.5, 0.5,
+
+            0.5, -0.5, -0.5, 0.5, 0.5,
+            0.5, 0.5, -0.5, 0.75, 0.5,
+            0.5, -0.5, 0.5, 0.5, 1,
+            0.5, -0.5, 0.5, 0.5, 1,
+            0.5, 0.5, -0.5, 0.75, 0.5,
+            0.5, 0.5, 0.5, 0.75, 1,
         ]
     });
 
@@ -25,64 +68,12 @@ function MultiPoint() {
         return () => window.onresize = null;
     }, []);
 
-    const rebuildData = canvas => {
-        let scale = buildLengthWidthEqualScale(canvas);
-        const data = [
-            -0.4, -0.4, -0.4, 0, 0,
-            -0.4, 0.4, -0.4, 0, 0.5,
-            0.4, -0.4, -0.4, 0.25, 0,
-            -0.4, 0.4, -0.4, 0, 0.5,
-            0.4, 0.4, -0.4, 0.25, 0.5,
-            0.4, -0.4, -0.4, 0.25, 0,
-
-            -0.4, -0.4, 0.4, 0.25, 0,
-            0.4, -0.4, 0.4, 0.5, 0,
-            -0.4, 0.4, 0.4, 0.25, 0.5,
-            -0.4, 0.4, 0.4, 0.25, 0.5,
-            0.4, -0.4, 0.4, 0.5, 0,
-            0.4, 0.4, 0.4, 0.5, 0.5,
-
-            -0.4, 0.4, -0.4, 0.5, 0,
-            -0.4, 0.4, 0.4, 0.5, 0.5,
-            0.4, 0.4, -0.4, 0.75, 0,
-            -0.4, 0.4, 0.4, 0.5, 0.5,
-            0.4, 0.4, 0.4, 0.75, 0.5,
-            0.4, 0.4, -0.4, 0.75, 0,
-
-            -0.4, -0.4, -0.4, 0, 0.5,
-            0.4, -0.4, -0.4, 0.25, 0.5,
-            -0.4, -0.4, 0.4, 0, 1,
-            -0.4, -0.4, 0.4, 0, 1,
-            0.4, -0.4, -0.4, 0.25, 0.5,
-            0.4, -0.4, 0.4, 0.25, 1,
-
-            -0.4, -0.4, -0.4, 0.25, 0.5,
-            -0.4, -0.4, 0.4, 0.25, 1,
-            -0.4, 0.4, -0.4, 0.5, 0.5,
-            -0.4, -0.4, 0.4, 0.25, 1,
-            -0.4, 0.4, 0.4, 0.5, 1,
-            -0.4, 0.4, -0.4, 0.5, 0.5,
-
-            0.4, -0.4, -0.4, 0.5, 0.5,
-            0.4, 0.4, -0.4, 0.75, 0.5,
-            0.4, -0.4, 0.4, 0.5, 1,
-            0.4, -0.4, 0.4, 0.5, 1,
-            0.4, 0.4, -0.4, 0.75, 0.5,
-            0.4, 0.4, 0.4, 0.75, 1,
-        ];
-        for (let i = 0, j = data.length; i < j; i += 5) {
-            data[i] = scale * data[i];
-            data[i + 2] = scale * data[i + 2];
-        }
-        setData(data);
-    };
-
     function extracted() {
 
         //获取canvas元素并设置宽高
         const canvasNode = canvasRef.current;
         let canvas = initCanvas(canvasNode);
-        rebuildData(canvas);
+        // rebuildData(canvas);
         buildLengthWidthEqualScale(canvas);
         //获取webgl画笔
         return canvas.getContext('webgl');
@@ -98,6 +89,15 @@ function MultiPoint() {
         setWebGl(gl);
     }, []);
 
+    const buildCamera = () => {
+        let canvas = canvasRef.current;
+        let scale = buildLengthWidthEqualScale(canvas);
+        const halfCameraH = 2;
+        let halfCameraW = halfCameraH / scale;
+        //相机世界的左右上下远近(前后)边界
+        return [-halfCameraW, halfCameraW, halfCameraH, -halfCameraH, 0, 4];
+    }
+
     useEffect(() => {
         if (!webgl) return;
         webgl.activeTexture(webgl.TEXTURE0);
@@ -111,22 +111,26 @@ function MultiPoint() {
             //配置纹理参数
             webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
             const uSampler = webgl.getUniformLocation(webgl.program, 'u_Sampler');
-            let moduleMatrix = new Matrix4();
+            let projectionMatrix = webgl.getUniformLocation(webgl.program, 'u_ProjectionMatrix');
             let moduleMat = webgl.getUniformLocation(webgl.program, 'u_ModuleMat');
+            let moduleMatrix = new Matrix4();
+            let pMatrix = new Matrix4();
+            pMatrix = pMatrix.makeOrthographic(...buildCamera());
+            webgl.uniformMatrix4fv(projectionMatrix, false, pMatrix.elements);
             webgl.uniform1i(uSampler, 0);
             // (function ani() {
-                const x = new Matrix4().makeRotationX(0.5 * Math.PI);
-                // const y = new Matrix4().makeRotationY(0.02);
-                // webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(y).elements);
-                webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(x).elements);
-                // webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(x).multiply(y).elements);
-                // const viewMatrix = new Matrix4().lookAt(
-                //     new Vector3(0, 1, 0),
-                //     new Vector3(),
-                //     new Vector3(0, 1, 0)
-                // );
-                // webgl.uniformMatrix4fv(moduleMat, false, viewMatrix.multiply(moduleMatrix).elements);
-                draw(['TRIANGLES']);
+            const x = new Matrix4().makeRotationX(0.5 * Math.PI);
+            // const y = new Matrix4().makeRotationY(0.02);
+            // webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(y).elements);
+            webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(x).elements);
+            // webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(x).multiply(y).elements);
+            // const viewMatrix = new Matrix4().lookAt(
+            //     new Vector3(0, 1, 0),
+            //     new Vector3(),
+            //     new Vector3(0, 1, 0)
+            // );
+            // webgl.uniformMatrix4fv(moduleMat, false, viewMatrix.multiply(moduleMatrix).elements);
+            draw(['TRIANGLES']);
             //     requestAnimationFrame(ani);
             // })()
         }

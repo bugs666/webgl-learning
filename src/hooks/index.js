@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {loadImage} from "../utils";
 
 /**
  * 初始化webgl
@@ -150,4 +151,29 @@ export function useInitWebGlContext(
         setData: setOriginalVertexData,
         verticesData: originalVertexDataRef.current
     };
+}
+
+/**
+ * 初始化纹理对象
+ * @param webgl
+ * @param fallback
+ */
+export function useInitTextureMap(webgl, fallback, imagesConf) {
+    useEffect(() => {
+        webgl.pixelStorei(webgl.UNPACK_FLIP_Y_WEBGL, 1);
+        webgl.activeTexture(webgl.TEXTURE0);
+        let texture = webgl.createTexture();
+        webgl.bindTexture(webgl.TEXTURE_2D, texture);
+        let conf = {};
+        let imagePromiseList = imagesConf.map(({url, attr}, i) => {
+            conf[i] = attr;
+            return loadImage(url);
+        });
+        Promise.all(imagePromiseList).then(images => {
+            images.forEach((image, i) => {
+
+            });
+            fallback && fallback()
+        });
+    }, [webgl]);
 }

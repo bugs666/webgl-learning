@@ -3,7 +3,7 @@
  * 绘制圆形顶点
  */
 import {useEffect, useRef} from "react";
-import {initShaders, initCanvas, buildLengthWidthEqualScale} from "../../../../utils";
+import {initShaders, initCanvas, buildLengthWidthEqualScale, loadImage} from "../../../../utils";
 import vertex from '@shader/TextureMapShader/Vertex.glsl';
 import fragment from '@shader/TextureMapShader/Fragment.glsl';
 import funny from '../../../../assets/funny.jpg';
@@ -55,9 +55,7 @@ function TextureMap() {
         const texture = webgl.createTexture();
         //把纹理对象装进纹理单元里
         webgl.bindTexture(webgl.TEXTURE_2D, texture);
-        const image = new Image();
-        image.src = funny;
-        image.onload = () => {
+        loadImage(funny).then(image => {
             // 配置纹理图像
             webgl.texImage2D(webgl.TEXTURE_2D, 0, webgl.RGB, webgl.RGB, webgl.UNSIGNED_BYTE, image);
             //配置纹理参数
@@ -68,7 +66,7 @@ function TextureMap() {
             const uSampler = webgl.getUniformLocation(webgl.program, 'u_Sampler');
             webgl.uniform1i(uSampler, 1);
             draw(['TRIANGLE_STRIP']);
-        };
+        });
     }, [webgl]);
 
     return <canvas ref={canvasRef}/>
