@@ -1,13 +1,9 @@
-/**
- * 模型矩阵
- * 描述模型运动，旋转，位移，缩放
- */
 import {useEffect, useRef} from "react";
 import {initShaders, initCanvas, buildLengthWidthEqualScale, getViewMatrix} from "../../utils";
 import VERTEX_SHADER from "@shader/RubiksCubeShaders/Vertex.glsl";
 import FRAGMENT_SHADER from '@shader/RubiksCubeShaders/Fragment.glsl';
 import {useInitWebGlContext} from "../../hooks";
-import {Matrix4, Vector3} from 'three';
+import {Matrix4, OrthographicCamera} from 'three';
 import mf from '@assets/mf.jpg';
 
 function MultiPoint() {
@@ -111,28 +107,23 @@ function MultiPoint() {
             //配置纹理参数
             webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
             const uSampler = webgl.getUniformLocation(webgl.program, 'u_Sampler');
-            let projectionMatrix = webgl.getUniformLocation(webgl.program, 'u_ProjectionMatrix');
+            let pvMatrix = webgl.getUniformLocation(webgl.program, 'u_pvMatrix');
             let moduleMat = webgl.getUniformLocation(webgl.program, 'u_ModuleMat');
             let moduleMatrix = new Matrix4();
-            let pMatrix = new Matrix4();
-            pMatrix = pMatrix.makeOrthographic(...buildCamera());
-            webgl.uniformMatrix4fv(projectionMatrix, false, pMatrix.elements);
+            //创建相机对象
+            let camera = new OrthographicCamera(...buildCamera());
+            camera.position.set(0, 0, 3);
+            camera.updateMatrixWorld(true);
+            const pvMat = new Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+            webgl.uniformMatrix4fv(pvMatrix, false, pvMat.elements);
             webgl.uniform1i(uSampler, 0);
-            // (function ani() {
-            const x = new Matrix4().makeRotationX(0.5 * Math.PI);
-            // const y = new Matrix4().makeRotationY(0.02);
-            // webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(y).elements);
-            webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(x).elements);
-            // webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(x).multiply(y).elements);
-            // const viewMatrix = new Matrix4().lookAt(
-            //     new Vector3(0, 1, 0),
-            //     new Vector3(),
-            //     new Vector3(0, 1, 0)
-            // );
-            // webgl.uniformMatrix4fv(moduleMat, false, viewMatrix.multiply(moduleMatrix).elements);
-            draw(['TRIANGLES']);
-            //     requestAnimationFrame(ani);
-            // })()
+            (function ani() {
+                const x = new Matrix4().makeRotationX(0.02);
+                const y = new Matrix4().makeRotationY(0.02);
+                webgl.uniformMatrix4fv(moduleMat, false, moduleMatrix.multiply(x).multiply(y).elements);
+                draw(['TRIANGLES']);
+                requestAnimationFrame(ani);
+            })();
         }
     }, [webgl]);
 

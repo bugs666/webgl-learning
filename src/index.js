@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.scss';
 import App from './App';
-import {Routes, HashRouter, Route} from "react-router-dom";
+import {Routes, BrowserRouter, Route} from "react-router-dom";
 import routes from "./core/route.config";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -25,11 +25,11 @@ const getRoutes = () => {
 
 
 root.render(
-    <HashRouter>
+    <BrowserRouter>
         <Routes>
             <Route path='/' element={<App/>}>
                 {getRoutes()}
             </Route>
         </Routes>
-    </HashRouter>
+    </BrowserRouter>
 );
