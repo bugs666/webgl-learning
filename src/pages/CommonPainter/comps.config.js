@@ -3,6 +3,7 @@ import RectangularFace from "./compontents/RectangularFace";
 import SinglePoint from "./compontents/SinglePoint";
 import MultiColorPoint from "./compontents/MultipColorPoint";
 import TextureMap from "./compontents/TextureMap";
+import GradientCanvas from "./compontents/GradientCanvas";
 
 const COMP_CONFIG = [
     {
@@ -24,6 +25,10 @@ const COMP_CONFIG = [
     {
         msg: '纹理贴图',
         comp: TextureMap
+    },
+    {
+        msg: '渐变色画布',
+        comp: GradientCanvas
     }
 ];
 
